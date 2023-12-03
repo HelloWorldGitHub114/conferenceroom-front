@@ -274,7 +274,7 @@
                     "digest": "asdasd",
                     "depNo": "007",
                     "depName": "公关部",
-                    "roomId": null,
+                    "roomID": null,
                     "roomNo": "302",
                     "roomFloor": "14",
                     "roomType": "小多媒体会议室"

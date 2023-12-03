@@ -60,7 +60,7 @@
                     </el-table-column>
                     <el-table-column
                             label="会议室名称"
-                            prop="roomType"
+                            prop="roomName"
                             align="center">
                     </el-table-column>
                     <el-table-column
@@ -334,7 +334,7 @@
                         "depNo": "007",
                         "depName": "abc",
                         "depEmail":"6191220122@qq.com",
-                        "roomId": null,
+                        "roomID": null,
                         "roomNo": "302",
                         "roomFloor": "14",
                         "roomType": "小多媒体会议室",
@@ -373,7 +373,7 @@
                 }).then(({ value }) => {
                         let map = {
                             "applyId":row.applyId,
-                            "roomId":row.roomId,
+                            "roomID":row.roomID,
                             "startTime":row.startTime,
                             "endTime":row.endTime,
                             "auditState":2,
@@ -406,7 +406,7 @@
            access(row) {
                 let map = {
                     "applyId":row.applyId,
-                    "roomId":row.roomId,
+                    "roomID":row.roomID,
                     "startTime":row.startTime,
                     "endTime":row.endTime,
                     "auditState":1,

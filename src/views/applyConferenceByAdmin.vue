@@ -67,7 +67,7 @@
                     width="150">
             </el-table-column>
             <el-table-column
-                    prop="roomType"
+                    prop="roomName"
                     label="类型"
                     width="250">
             </el-table-column>
@@ -207,7 +207,7 @@
                     {"did":'',
                         "dname":'',
                         "dnumber":'',
-                        "roomId":'',
+                        "roomID":'',
 
                     }
                 ],
@@ -244,7 +244,7 @@
 
                 //表格绑定
                 conferenceRooms: [{
-                    roomId:2,
+                    roomID:2,
                     roomNo: "003",
                     roomFloor: 11,
                     roomType: '大多媒体会议室',
@@ -256,7 +256,7 @@
                     "apply": {
                         "roomSize":'', //申请会议室时 会议人数要比较
                         "depId": '',
-                        "roomId": ''
+                        "roomID": ''
                     },
                     "conferenceRecord": {
                         "startTime": null,
@@ -305,9 +305,9 @@
         methods:{
 
             lookDevice(row){
-                let roomId = row.roomId;
+                let roomID = row.roomID;
                 let _this = this;
-                _this.axios.get("/device/listbyapply/"+roomId,{
+                _this.axios.get("/device/listbyapply/"+roomID,{
                     headers:{
                         "Authorization":localStorage.getItem("token")
                     }
@@ -351,7 +351,7 @@
                     //转为时间戳
                     let startTime = new Date(this.record.conferenceRecord.startTime);
                     let endTime = new Date(this.record.conferenceRecord.endTime);
-                    let roomId = this.record.apply.roomId;
+                    let roomID = this.record.apply.roomID;
                     console.log(startTime.getHours(),endTime.getHours())
 
                     //结束时间必须大于开始时间 并且会议最短为10分钟
@@ -385,7 +385,7 @@
                     } else {
 
                         let _this = this;
-                        _this.axios.get("/apply/searchtimeconflict/" + roomId + "/" + _this.record.conferenceRecord.startTime
+                        _this.axios.get("/apply/searchtimeconflict/" + roomID + "/" + _this.record.conferenceRecord.startTime
                             + "/" + _this.record.conferenceRecord.endTime, {
                             headers: {
                                 "Authorization": localStorage.getItem("token")
@@ -496,7 +496,7 @@
             },
             handleApply(index, row) {
                 this.dialogFormApply = true;
-                this.record.apply.roomId = row.roomId;
+                this.record.apply.roomID = row.roomID;
                 this.record.apply.roomSize = row.roomSize;
 
                 let _this = this;

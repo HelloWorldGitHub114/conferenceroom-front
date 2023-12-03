@@ -18,14 +18,17 @@
                         <el-form-item label="房号" prop="roomNo">
                             <el-input v-model="ruleForm.roomNo" ></el-input>
                         </el-form-item>
-                        <el-form-item label="名字" prop="roomType">
-                            <el-input  v-model="ruleForm.roomType"></el-input>
+                        <el-form-item label="名字" prop="roomName">
+                            <el-input  v-model="ruleForm.roomName"></el-input>
+                        </el-form-item>
+                        <el-form-item label="楼层" prop="roomFloor">
+                          <el-input v-model.number="ruleForm.roomFloor"></el-input>
                         </el-form-item>
                         <el-form-item label="可容纳人数" prop="roomSize">
                             <el-input v-model.number="ruleForm.roomSize"></el-input>
                         </el-form-item>
-                        <el-form-item label="面积" prop="roomFloor">
-                          <el-input v-model="ruleForm.roomFloor"></el-input>
+                        <el-form-item label="面积" prop="roomArea">
+                          <el-input v-model.number="ruleForm.roomArea"></el-input>
                         </el-form-item>
                         <el-form-item>
                             <el-button v-if="update" style="background-color: oldlace"  round @click="updateForm('ruleForm')">更 新</el-button>
@@ -47,26 +50,7 @@
                     </el-option>
                 </el-select>
 
-                <el-select
-                        class="mselect"
-                        v-model="roomType"
-                        clearable
-                        placeholder="类型"
-                        @change="change">
-                    <el-option
-                            v-for="item in types"
-                            :key="item.roomType"
-                            :label="item.roomType"
-                            :value="item.roomType">
-                    </el-option>
-                </el-select>
-
-                <el-select
-                        class="mselect"
-                        v-model="roomSize"
-                        clearable
-                        placeholder="可容纳人数"
-                        @change="change">
+                <el-select class="mselect" v-model="roomSize" clearable placeholder="可容纳人数" @change="change">
                     <el-option
                             v-for="item in sizes"
                             :key="item.roomSize"
@@ -75,11 +59,16 @@
                     </el-option>
                 </el-select>
 
+                <el-select class="mselect" v-model="roomState" clearable placeholder="状态" @change="change">
+                  <el-option label="可用" value="1"></el-option>
+                  <el-option label="不可用" value="0"></el-option>
+                </el-select>
+
             </div>
 
 
             <el-table :data="conferenceRooms.filter(data => !this.search || data.roomNo.toLowerCase().includes(this.search.toLowerCase())||
-                data.roomFloor.toLowerCase().includes(this.search.toLowerCase()) || data.roomType.toLowerCase().includes(this.search.toLowerCase()))"
+                data.roomFloor.toLowerCase().includes(this.search.toLowerCase()) || data.roomName.toLowerCase().includes(this.search.toLowerCase()))"
                     style="width: 100%;text-align: center"
                     :row-class-name="this.tableRowClassName">
                 <el-table-column
@@ -89,13 +78,19 @@
                         align="center">
                 </el-table-column>
                 <el-table-column
-                        prop="roomType"
+                        prop="roomName"
                         label="名称"
                         width="200"
                         align="center">
                 </el-table-column>
                 <el-table-column
                         prop="roomFloor"
+                        label="楼层"
+                        width="120"
+                        align="center">
+                </el-table-column>
+                <el-table-column
+                        prop="roomArea"
                         label="面积"
                         width="120"
                         align="center">
@@ -146,7 +141,6 @@
                                 icon="el-icon-plus"
                                 circle
                                 type="success"
-
                         ></el-button>
 
 
@@ -161,7 +155,7 @@
 
                         <template>
                             <el-popconfirm
-                                    title="确定删除该部门吗？"
+                                    title="确定删除该会议室吗？"
                                     @onConfirm="handleDelete(scope.$index, scope.row)"
                             >
                                 <el-button
@@ -258,14 +252,14 @@
                     {   "did":'',
                        "dname":'',
                        "dnumber":'',
-                        "roomId":'',
+                        "roomID":'',
 
                     }
                 ],
 
 
                 deviceForm:{
-                    "roomId":'',
+                    "roomID":'',
                     "dname":'',
                     "dnumber":'',
                 },
@@ -278,9 +272,6 @@
                 floors:[{
                     roomFloor:'1'
                 }],
-                types:[{
-                    roomType:'多媒体'
-                }],
                 sizes:[{
                     roomSize:100
                 }],
@@ -288,17 +279,18 @@
                 //与下拉选框双向绑定
                 roomFloor:'',
                 roomSize:'',
-                roomType:'',
+                roomState:'',
 
                 //抽屉表单中更新还是添加部门的判断依据
                 update:false,
                 search:'',
                 conferenceRooms: [{
-                    roomId:2,
+                    roomID: 2,
                     roomNo: "003",
+                    roomName: '会议室1',
                     roomFloor: 11,
-                    roomType: '大多媒体会议室',
                     roomSize: '300',
+                    roomArea: 11,
                     roomState: 1
                 }],
                 dialog: false,
@@ -306,12 +298,13 @@
                 //如果是添加 id 状态是没有数据的 所以在后台中会判断成添加会议室 并且状态设置为1表示可用
                 //如果是编辑 那么会调用handleEdit方法 把该行的数据给ruleForm 回显在表单中 此时的ruleForm是有Id的
                 ruleForm: {
-                    roomId:'',
+                    roomID:'',
                     roomNo: '',
+                    roomName:'',
                     roomFloor: '',
-                    roomType:'',
-                    roomState: '',
-                   roomSize: '',
+                    roomSize: '',
+                    roomArea: '',
+                    roomState: ''
                 },
 
 
@@ -319,20 +312,25 @@
 
                 rules: {
                     roomNo: [
-                        {required: true, message: '请输入门牌号', trigger: 'blur'},
-                        {min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur'}
+                        { required: true, message: '请输入房号', trigger: 'blur'},
+                        { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur'}
                     ],
                     roomFloor: [
-                        {required: true, message: '请输入楼层', trigger: 'blur'},
+                        { required: true, message: '请输入楼层', trigger: 'blur'},
+                        { type: 'number', message: '必须为数字', trigger: 'blur' }
                     ],
-                    roomType: [
-                        {required: true, message: '请输入会议室类型', trigger: 'blur'},
-                        {min: 3, max: 15, message: '长度在 3 到 5 个字符', trigger: 'blur'}
+                    roomName: [
+                        { required: true, message: '请输入会议室名称', trigger: 'blur'},
+                        { min: 3, max: 15, message: '长度在 3 到 15 个字符', trigger: 'blur'}
                     ],
                     roomSize: [
                         { required: true, message: '请输入可容纳人数', trigger: 'blur' },
                         { type: 'number', message: '必须为数字', trigger: 'blur' }
-                    ]
+                    ],
+                    roomArea: [
+                        { required: true, message: '请输入面积', trigger: 'blur'},
+                        { type: 'number', message: '必须为数字', trigger: 'blur' }
+                    ],
                 },
 
                 deviceFormRules:{
@@ -375,7 +373,7 @@
                 }).then(res=>{
                     _this.$message.success("删除成功");
                     //刷新表格
-                    _this.axios.get("/device/listby/"+row.roomId,{
+                    _this.axios.get("/device/listby/"+row.roomID,{
                         headers:{
                             "Authorization":localStorage.getItem("token")
                         }
@@ -401,7 +399,7 @@
 
                                 _this.deviceForm = {
                                     "did":'',
-                                    "roomId": '',
+                                    "roomID": '',
                                     "dname": '',
                                     "dnumber": '',
                                 };
@@ -411,7 +409,7 @@
                             else {
                                 _this.$message.success("修改成功")
                                 //刷新表格
-                                _this.axios.get("/device/listby/"+_this.deviceForm.roomId,{
+                                _this.axios.get("/device/listby/"+_this.deviceForm.roomID,{
                                     headers:{
                                         "Authorization":localStorage.getItem("token")
                                     }
@@ -420,7 +418,7 @@
                                 });
                                 _this.deviceForm = {
                                     "did":'',
-                                    "roomId": '',
+                                    "roomID": '',
                                     "dname": '',
                                     "dnumber": '',
                                 };
@@ -438,10 +436,11 @@
                 });
             },
 
+          //这里应该展示全面的信息而不是设备，以后改
             lookDevice(row){
-                let roomId = row.roomId;
+                let roomID = row.roomID;
                 let _this = this;
-                _this.axios.get("/device/listby/"+roomId,{
+                _this.axios.get("/device/listby/"+roomID,{
                     headers:{
                         "Authorization":localStorage.getItem("token")
                     }
@@ -455,7 +454,7 @@
 
             handleaddDevice(row){
                 this.isUpdateDevice = '添加设备';
-                this.deviceForm.roomId = row.roomId;
+                this.deviceForm.roomID = row.roomID;
                 this.dialogFormVisible = true;
 
             },
@@ -464,9 +463,8 @@
                 //这样才能避免为空的时候也能传递数据  因为后台restFul风格下传递的参数不能不传 如果直接写this.xxx
                 //当属性为空时  传递不了
                 let floor = JSON.stringify(this.roomFloor);
-                let type1  = JSON.stringify(this.roomType);
                 let size = JSON.stringify(this.roomSize);
-                let url = "/conference-room/listby/"+floor+"/"+type1+"/"+size;
+                let url = "/conference-room/listby/"+floor+"/"+"/"+size;
 
                 let _this = this;
                 this.axios.get(url,{
@@ -496,10 +494,10 @@
                 this.update=false;
                 //关闭抽屉时  把数据清空
                 this.ruleForm = {
-                    roomId:'',
+                    roomID:'',
                     roomNo: '',
                     roomFloor: '',
-                    roomType:'',
+                    roomName:'',
                     roomState: '',
                     roomSize: '',
                 };
@@ -519,10 +517,10 @@
                             _this.dialog=false;
                             _this.update=false;
                             _this.ruleForm = {
-                                roomId:'',
+                                roomID:'',
                                 roomNo: '',
                                 roomFloor: '',
-                                roomType:'',
+                                roomName:'',
                                 roomState: '',
                                 roomSize: '',
                             };
@@ -549,10 +547,10 @@
                             _this.$message.success("添加成功");
                             _this.dialog=false;
                             this.ruleForm = {
-                                roomId:'',
+                                roomID:'',
                                 roomNo: '',
                                 roomFloor: '',
-                                roomType:'',
+                                roomName:'',
                                 roomState: '',
                                 roomSize: '',
                             };
@@ -568,10 +566,10 @@
             },
             resetForm(formName) {
                 this.ruleForm={
-                    roomId:'',
+                    roomID:'',
                     roomNo: '',
                     roomFloor: '',
-                    roomType:'',
+                    roomName:'',
                     roomState: '',
                     roomSize: '',
                 }
@@ -608,7 +606,7 @@
             },
             handleDelete(index, row) {
                 let _this = this
-                _this.axios.delete("/conference-room/delete/"+row.roomId,{
+                _this.axios.delete("/conference-room/delete/"+row.roomID,{
                     headers:{
                         "Authorization":localStorage.getItem("token")
                     }

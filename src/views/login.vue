@@ -4,17 +4,17 @@
 
         <vue-particles
             class="login-bg"
-            color="#409EFF"
+            color="#ffffff"
             :particleOpacity="0.7"
-            :particlesNumber="60"
+            :particlesNumber="100"
             shapeType="circle"
-            :particleSize="6"
-            linesColor="#409EFF"
+            :particleSize="4"
+            linesColor="#fff"
             :linesWidth="1"
             :lineLinked="true"
             :lineOpacity="0.4"
             :linesDistance="150"
-            :moveSpeed="3"
+            :moveSpeed="2"
             :hoverEffect="true"
             hoverMode="grab"
             :clickEffect="true"
@@ -102,16 +102,11 @@
                     if (valid) {
                        let _this = this;
                       this.axios.post("/login",_this.ruleForm).then((res)=> {
-                        const jwt = res.headers['Authorization'];
+                        const jwt = res.headers['authorization'];
+                        console.log(res.headers['authorization']);
                         const userInfo = res.data.data;
                         _this.$store.commit('SET_TOKEN',jwt);
                         _this.$store.commit('SET_USERINFO',userInfo);
-
-                        /*const jwt = "admin_token";
-                      const userInfo = { username: "admin", role:"admin" };
-                      _this.$store.commit("SET_TOKEN", jwt);
-                      _this.$store.commit("SET_USERINFO", userInfo);*/
-
 
                         _this.$message({
                           message: '恭喜你登录成功!!!!',
@@ -150,7 +145,7 @@
         position: fixed;
         width: 100%;
         height: 100%;
-        background-image: url('../assets/images/会议室图片.jpg');
+        background-image: url('../assets/images/background.png');
         background-position: center center;
         background-size: cover;
     }
@@ -159,7 +154,7 @@
       height: 100%;
       width: 100%;
       background-size: cover;
-      background-repeat: no-repeat;
+      background: no-repeat;
       opacity:0.9;
       position:fixed;
     }
@@ -179,10 +174,6 @@
     .demo-ruleForm{
         margin: 10px 30px;
     }
-
-
-
-
 
     .clearfix:before,
     .clearfix:after {

@@ -10,10 +10,11 @@
                  text-color="#fff"
                  active-text-color="rgb(64, 158, 255)"
                  :router="true">
-          <el-menu-item @click="isClossTabFun">
-            <i class="el-header"></i>
-            <span slot="title">会议室管理系统</span>
+          <el-menu-item @click="toggleCollapse">
+            <i :class="isCollapse?'toggle-icon el-icon-caret-right':'toggle-icon el-icon-caret-left'"></i>
+            <span class="main-title">会议室管理系统</span>
           </el-menu-item>
+
           <el-submenu index="1">
             <template slot="title">
               <i class="iconfont iconshenqing"></i>
@@ -42,8 +43,8 @@
       </el-aside>
 
       <el-container>
-        <el-header class="main-header" >
-          <div style="margin-top: 20px">
+        <el-header class="main-header" style="height: 56px">
+          <div style="margin-top: 18px">
             <el-dropdown @command="dropdown">
               <i class="el-icon-s-tools" style="margin-right: 10px;"></i>
               <el-dropdown-menu slot="dropdown">
@@ -146,7 +147,7 @@
                // console.log(key, keyPath);
             },
 
-            isClossTabFun() {
+            toggleCollapse() {
                 this.isCollapse = !this.isCollapse;
             }
         },
@@ -187,6 +188,13 @@
         margin: 0;
     }
 
+    .toggle-icon {
+      text-align: left;
+      position: relative;
+      font-size: 22px;
+      color: rgb(128,128,128);
+    }
+
 </style>
 <style scoped>
     .main {
@@ -203,27 +211,14 @@
         color: rgb(255, 255, 255);
     }
 
-    .isClossTab{
-                width: 100%;
-                height: 60px;
-                cursor: pointer;
-                font-size: 16px;
-                text-align: center;
-                line-height: 60px;
-                font-weight: bold;
-                border-right: 1px solid #807c7c;
-                box-sizing: border-box;
-    }
-
     .main-header {
         background-color:oldlace;
         color: #FFF;
         text-align: right;
         font-size: 16px;
         color: olivedrab;
+        height: 56px;
     }
-
-
 
     .crumbs {
         margin-bottom: 20px;
@@ -233,7 +228,15 @@
             text-align: center;
             font-size: 13px;
             line-height: 50px;
-        }
+    }
+
+    .main-title{
+      text-align: center;
+      position: relative;
+      font-size: 16px;
+      color: whitesmoke;
+      font-weight: bold;
+    }
 
     .el-header {
       background: #b3c0d1;
