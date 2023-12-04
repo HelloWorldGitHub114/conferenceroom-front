@@ -30,15 +30,11 @@
 
           </el-menu-item>
 
-          <el-submenu index="4" :disabled="!isAdmin">
-            <template slot="title">
-              <i class="iconfont iconmenu-s"></i>
-              <span slot="title">申请管理</span>
-            </template>
-            <el-menu-item index="/conferenceRecordByAdmin">查看申请</el-menu-item>
-            <el-menu-item index="/applyConferenceByAdmin">审批预约</el-menu-item>
+          <el-menu-item index="/conferenceRecordByAdmin" :disabled="!isAdmin">
+            <i class="iconfont iconmenu-s"></i>
+            <span slot="title">查看申请</span>
+          </el-menu-item>
 
-          </el-submenu>
         </el-menu>
       </el-aside>
 

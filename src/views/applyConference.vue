@@ -542,19 +542,24 @@
             change(){
                 //这样才能避免为空的时候也能传递数据  因为后台restFul风格下传递的参数不能不传 如果直接写this.xxx
                 //当属性为空时  传递不了
-                let floor = JSON.stringify(this.roomFloor);
-                let type1  = JSON.stringify(this.roomType);
-                let size = JSON.stringify(this.roomSize);
-                let url = "/conference-room/listbyonstate/"+floor+"/"+type1+"/"+size;
+              const jsonParams = {
+                roomFloor: this.roomFloor,
+                roomSize: this.roomSize,
+              };
+              const queryString = Object.keys(jsonParams)
+                  .filter(key => jsonParams[key] !== null && jsonParams[key] !== undefined && jsonParams[key] !== '')
+                  .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(jsonParams[key])}`)
+                  .join('&');
+              let url = "/conference-room/listbyonstate?"+queryString;
 
-                let _this = this;
-                this.axios.get(url,{
-                    headers:{
-                        "Authorization":localStorage.getItem("token")
-                    }
-                }).then(res=>{
-                    _this.conferenceRooms = res.data.data;
-                })
+              let _this = this;
+              this.axios.get(url,{
+                headers:{
+                  "Authorization":localStorage.getItem("token")
+                }
+              }).then(res=>{
+                _this.conferenceRooms = res.data.data;
+              })
             },
 
             getConditions(){
