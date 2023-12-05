@@ -3,30 +3,15 @@
         <el-tabs v-model="auditState" @tab-click="handleClick">
             <el-tab-pane key="admin0" name="0">
                 <span slot="label"><i class="iconfont icontongguo"></i> 未审核</span>
-
-
-                <div class="mConditions" style="margin-left: 20px;margin-bottom: 10px">
-                    <el-select  v-model="depName" clearable placeholder="" @change="change">
-                        <el-option
-                                v-for="item in depNames"
-                                :key="item.depName"
-                                :label="item.depName"
-                                :value="item.depName">
-                        </el-option>
-                    </el-select>
-                </div>
-
-                <el-table
-                        :data="formData.filter(data => !search || data.theme.toLowerCase().includes(search.toLowerCase())||
-                data.roomNo.toLowerCase().includes(search.toLowerCase()) ||  data.roomFloor.toLowerCase().includes(search.toLowerCase())
-                || data.depName.toLowerCase().includes(search.toLowerCase()))"
+                <el-table :data="formData.filter(data => !search || data.theme.toLowerCase().includes(search.toLowerCase())||
+                data.roomNo.toLowerCase().includes(search.toLowerCase()) ||  data.UserID.toLowerCase().includes(search.toLowerCase()))"
                         style="width: 100%"
                         :row-class-name="tableRowClassName">
                     <el-table-column type="expand">
                         <template slot-scope="props">
                             <el-form label-position="left" inline class="demo-table-expand">
-                                <el-form-item label="会议室类型">
-                                    <span>{{ props.row.roomType }}</span>
+                                <el-form-item label="会议室楼层">
+                                    <span>{{ props.row.roomFloor }}</span>
                                 </el-form-item>
                                 <el-form-item label="会议摘要">
                                     <span>{{ props.row.digest }}</span>
@@ -45,7 +30,7 @@
                     </el-table-column>
                     <el-table-column
                             label="预约编号"
-                            prop="roomFloor"
+                            prop="applyId"
                             align="center">
                     </el-table-column>
                     <el-table-column
@@ -64,8 +49,8 @@
                             align="center">
                     </el-table-column>
                     <el-table-column
-                            label="申请人"
-                            prop="depName"
+                            label="申请用户ID"
+                            prop="UserID"
                             align="center">
                     </el-table-column>
                     <el-table-column align="right" >
@@ -73,7 +58,7 @@
                             <el-input
                                     v-model="search"
                                     size="mid"
-                                    placeholder="输入主题、房号、申请人"/>
+                                    placeholder="输入主题、房号、申请人ID"/>
                         </template>
                         <template slot-scope="scope">
                             <el-button
@@ -108,27 +93,16 @@
             </el-tab-pane>
             <el-tab-pane key="admin1" name="1">
                 <span slot="label"><i class="iconfont icontongguo"></i> 已批准</span>
-                <div class="mConditions" style="margin-left: 20px;margin-bottom: 10px">
-                    <el-select  v-model="depName" clearable placeholder="" @change="change">
-                        <el-option
-                                v-for="item in depNames"
-                                :key="item.depName"
-                                :label="item.depName"
-                                :value="item.depName">
-                        </el-option>
-                    </el-select>
-                </div>
-                <el-table
-                        :data="formData.filter(data => !search || data.theme.toLowerCase().includes(search.toLowerCase())||
-                data.roomNo.toLowerCase().includes(search.toLowerCase()) ||  data.roomFloor.toLowerCase().includes(search.toLowerCase())
-                 || data.depName.toLowerCase().includes(search.toLowerCase()))"
+                
+                <el-table :data="formData.filter(data => !search || data.theme.toLowerCase().includes(search.toLowerCase())||
+                data.roomNo.toLowerCase().includes(search.toLowerCase()) ||  data.UserID.toLowerCase().includes(search.toLowerCase()))"
                         style="width: 100%"
                         :row-class-name="tableRowClassName">
                     <el-table-column type="expand">
                         <template slot-scope="props">
                             <el-form label-position="left" inline class="demo-table-expand">
-                                <el-form-item label="会议室类型">
-                                    <span>{{ props.row.roomType }}</span>
+                                <el-form-item label="会议室楼层">
+                                    <span>{{ props.row.roomFloor }}</span>
                                 </el-form-item>
                                 <el-form-item label="会议摘要">
                                     <span>{{ props.row.digest }}</span>
@@ -145,28 +119,32 @@
                                 <el-form-item label="审核时间">
                                     <span>{{ props.row.auditTime }}</span>
                                 </el-form-item>
-
                             </el-form>
                         </template>
                     </el-table-column>
                     <el-table-column
-                            label="会议主题"
-                            prop="theme"
-                    width="180">
-                    </el-table-column>
-                    <el-table-column
-                            label="会议室门牌号"
-                            prop="roomNo"
-                    align="center">
-                    </el-table-column>
-                    <el-table-column
-                            label="会议室楼层"
-                            prop="roomFloor"
+                            label="预约编号"
+                            prop="applyId"
                             align="center">
                     </el-table-column>
                     <el-table-column
-                            label="申请部门"
-                            prop="depName"
+                            label="会议主题"
+                            prop="theme"
+                            align="center">
+                    </el-table-column>
+                    <el-table-column
+                            label="会议室房号"
+                            prop="roomNo"
+                            align="center">
+                    </el-table-column>
+                    <el-table-column
+                            label="会议室名称"
+                            prop="roomName"
+                            align="center">
+                    </el-table-column>
+                    <el-table-column
+                            label="申请用户ID"
+                            prop="UserID"
                             align="center">
                     </el-table-column>
                     <el-table-column align="right" >
@@ -174,7 +152,7 @@
                             <el-input
                                     v-model="search"
                                     size="mid"
-                                    placeholder="输入主题、房号、申请人"/>
+                                    placeholder="输入主题、房号、申请人ID"/>
                         </template>
                         <template slot-scope="scope">
                             <el-popconfirm
@@ -205,34 +183,16 @@
             </el-tab-pane>
             <el-tab-pane key="admin2" name="2">
                 <span slot="label"><i class="iconfont icontongguo"></i> 已驳回</span>
-                <div class="mConditions" style="margin-left: 20px;margin-bottom: 10px">
-                    <el-select  v-model="depName" clearable placeholder="" @change="change">
-                        <el-option
-                                v-for="item in depNames"
-                                :key="item.depName"
-                                :label="item.depName"
-                                :value="item.depName">
-                        </el-option>
-                    </el-select>
-                </div>
-                <el-table
-                        :data="formData.filter(data => !search || data.theme.toLowerCase().includes(search.toLowerCase())||
-                data.roomNo.toLowerCase().includes(search.toLowerCase()) ||  data.roomFloor.toLowerCase().includes(search.toLowerCase())
-                 || data.depName.toLowerCase().includes(search.toLowerCase()))"
+                <el-table :data="formData.filter(data => !search || data.theme.toLowerCase().includes(search.toLowerCase())||
+                data.roomNo.toLowerCase().includes(search.toLowerCase()) ||  data.UserID.toLowerCase().includes(search.toLowerCase()))"
                         style="width: 100%"
                         :row-class-name="tableRowClassName">
                     <el-table-column type="expand">
                         <template slot-scope="props">
                             <el-form label-position="left" inline class="demo-table-expand">
 
-                                <el-form-item label="驳回理由">
-                                    <span>{{ props.row.rejectReason }}</span>
-                                </el-form-item>
-                                <el-form-item label="审核时间">
-                                    <span>{{ props.row.auditTime }}</span>
-                                </el-form-item>
-                                <el-form-item label="会议室类型">
-                                    <span>{{ props.row.roomType }}</span>
+                                <el-form-item label="会议室楼层">
+                                    <span>{{ props.row.roomFloor }}</span>
                                 </el-form-item>
                                 <el-form-item label="会议摘要">
                                     <span>{{ props.row.digest }}</span>
@@ -246,27 +206,38 @@
                                 <el-form-item label="申请时间">
                                     <span>{{ props.row.applyTime }}</span>
                                 </el-form-item>
+                                <el-form-item label="审核时间">
+                                    <span>{{ props.row.auditTime }}</span>
+                                </el-form-item>
+                                <el-form-item label="驳回理由">
+                                    <span>{{ props.row.rejectReason }}</span>
+                                </el-form-item>
                             </el-form>
                         </template>
                     </el-table-column>
                     <el-table-column
-                            label="会议主题"
-                            prop="theme"
-                    width="180">
+                            label="预约编号"
+                            prop="applyId"
+                            align="center">
                     </el-table-column>
                     <el-table-column
-                            label="会议室门牌号"
+                            label="会议主题"
+                            prop="theme"
+                            align="center">
+                    </el-table-column>
+                    <el-table-column
+                            label="会议室房号"
                             prop="roomNo"
                             align="center">
                     </el-table-column>
                     <el-table-column
-                            label="会议室楼层"
-                            prop="roomFloor"
+                            label="会议室名称"
+                            prop="roomName"
                             align="center">
                     </el-table-column>
                     <el-table-column
-                            label="申请部门"
-                            prop="depName"
+                            label="申请用户ID"
+                            prop="UserID"
                             align="center">
                     </el-table-column>
                     <el-table-column align="right" >
@@ -274,7 +245,7 @@
                             <el-input
                                     v-model="search"
                                     size="mid"
-                                    placeholder="输入主题、房号、申请人"/>
+                                    placeholder="输入主题、房号、申请人ID"/>
                         </template>
                         <template slot-scope="scope">
                             <el-popconfirm
@@ -313,7 +284,6 @@
         data(){
             return {
                 auditState: '0',
-                depName: '',
                 search: '',
                 currentPage: 1,
                 total: 1,
@@ -321,30 +291,9 @@
 
                 formData: [
                     {
-                        "applyId": 5,
-                        "auditStatus": null,
-                        "applyTime": "2020-06-24 10:52:11",
-                        "auditTime": null,
-                        "rejectReason": null,
-                        "startTime": "2020-06-24 02:54:59",
-                        "endTime": "2020-06-24 03:55:02",
-                        "theme": "asdas",
-                        "personCount": 12,
-                        "digest": "asdasd",
-                        "depNo": "007",
-                        "depName": "abc",
-                        "depEmail":"6191220122@qq.com",
-                        "roomID": null,
-                        "roomNo": "302",
-                        "roomFloor": "14",
-                        "roomType": "小多媒体会议室",
                     },
 
                 ],
-
-                depNames: [
-                    {"depName": "研发部"}
-                ]
             }
         },
 
@@ -356,8 +305,7 @@
                         "Authorization":localStorage.getItem("token")
                     }
                 }).then(res=>{
-                    _this.getRecords(this.depName, this.auditState, this.currentPage);
-                    _this.getTotal();
+                    _this.getRecords(this.auditState, this.currentPage);
                     _this.$message({
                         message: '删除记录成功',
                         type: 'success',
@@ -376,12 +324,11 @@
                             "roomID":row.roomID,
                             "startTime":row.startTime,
                             "endTime":row.endTime,
-                            "auditState":2,
+                            "auditState":2,//驳回：状态默认改为2
                             "rejectReason":value,
                             "roomFloor":row.roomFloor,
                             "roomNo":row.roomNo,
                             "theme":row.theme,
-                            "depEmail":row.depEmail,
                             "applyTime":row.applyTime,
                             "result":'申请被驳回'
                         };
@@ -393,7 +340,7 @@
                             }
                         }).then(res=>{
 
-                            _this.getRecords(this.depName, this.auditState, this.currentPage);
+                            _this.getRecords(this.auditState, this.currentPage);
                             _this.$message({
                                 message: '驳回申请成功',
                                 type: 'success',
@@ -409,15 +356,12 @@
                     "roomID":row.roomID,
                     "startTime":row.startTime,
                     "endTime":row.endTime,
-                    "auditState":1,
+                    "auditState":1,//通过：状态默认改为1
                     "roomFloor":row.roomFloor,
                     "roomNo":row.roomNo,
                     "theme":row.theme,
-                    "depEmail":row.depEmail,
                     "applyTime":row.applyTime,
                     "result":'申请通过'
-
-
                 };
 
                 let _this = this;
@@ -432,12 +376,12 @@
                         center: true
                     });
 
-                    _this.getRecords(this.depName, this.auditState, this.currentPage);
+                    _this.getRecords(this.auditState, this.currentPage);
                 })
             },
             change(){
                 this.currentPage=1;
-                this.getRecords(this.depName, this.auditState, 1);
+                this.getRecords(this.auditState, 1);
             },
 
             tableRowClassName({row, rowIndex}) {
@@ -452,38 +396,46 @@
             },
 
             handleCurrentChange(currentPage) {
-                this.getRecords(this.depName, this.auditState, currentPage);
+                this.getRecords(this.auditState, currentPage);
             },
 
-            getRecords(depName, auditState, currentPage) {
-
-                //JSON格式转一下 防止为空的时候不能传递参数
-                let name = JSON.stringify(depName);
-
+            getRecords(auditState, currentPage)//depName后续删除
+            {
                 //查看所有记录
-                let deleted = null;
+                let deleted = 2;//表示查询所有的记录（不论删除、未删除）
                 deleted = JSON.stringify(deleted);
+                //删除是对于用户来说的 用户删除记录后改变deleted为1，指用户无法再看见，但数据库中依然存在该条记录，且管理员可见。
                 let _this = this;
-                _this.axios.get("/record/listbyconditions/" + auditState + "/" + name + "/" + currentPage+"/"+deleted, {
+                _this.axios.get("/record/listbyconditions/" + auditState + "/" + currentPage + "/" + deleted, {
                     headers: {
                         "Authorization": localStorage.getItem("token")
                     }
                 }).then(res => {
                     _this.formData = res.data.data;
                     console.log(_this.formData);
-                    if(_this.formData.length===0){
-
-
+                    this.ruleForm = {
+                        applyId:"",
+                        auditStatus: "",
+                        applyTime: "",
+                        auditTime: "",
+                        rejectReason: "",
+                        startTime: "",
+                        endTime: "",
+                        theme: "",
+                        personCount:"",
+                        digest: "",
+                        roomID: "",
+                        roomNo: "",
+                        roomFloor: "",
+                        roomName: "",
+                };
+                    if(_this.formData.length===0)
+                    {
                         let newCurrentPage;
-                        //不等于1的情况下 才要-1
-                        if(currentPage!==1) {
-                            newCurrentPage = currentPage - 1;
-                        }else{
-                            newCurrentPage = currentPage;
-                        }
+                        if(currentPage!==1) newCurrentPage = currentPage - 1;
+                        else newCurrentPage = currentPage;   
                         //在审核当前页面最后一个申请时，审核完 刷新数据 但是还是提交的当前页面的页码 查出来肯定是没有数据的。所以页码要减一来查
-                        //url不能进行计算
-                        _this.axios.get("/record/listbyconditions/" + auditState + "/" + name + "/" +newCurrentPage+"/"+deleted, {
+                        _this.axios.get("/record/listbyconditions/" + auditState + "/" + newCurrentPage + "/" + deleted, {
                             headers: {
                                 "Authorization": localStorage.getItem("token")
                             }
@@ -498,51 +450,18 @@
                         _this.currentPage = currentPage;
                     }
                 });
-
-            },
-
-            getTotal(){
-                let name = JSON.stringify(this.depName);
-                let deleted = null; //只查出没有被部门进行删除的
-                deleted = JSON.stringify(deleted);
-                let _this = this;
-                _this.axios.get("/record/gettotalbyconditions/" + _this.auditState + "/" + name+"/"+deleted, {
-                    headers: {
-                        "Authorization": localStorage.getItem("token")
-                    }
-                }).then(res => {
-                    _this.total = res.data.data;
-                });
             },
 
             handleClick() {
-                //换状态时  depName重新为空
-                this.getRecords(this.depName, this.auditState, 1)
-                this.getTotal();
+                this.getRecords(this.auditState, 1)
                 this.currentPage = 1;
-            },
-
-            getAllDeps(){
-                let _this = this;
-                _this.axios.get("/department/getalldeps",{
-                    headers:{
-                        "Authorization":localStorage.getItem("token")
-                    }
-                }).then(res=>{
-                    _this.depNames = res.data.data;
-                })
-
             }
 
         },
 
-
-
-        created() {
-            this.getAllDeps();
-            this.getRecords(this.depName, this.auditState, 1);
-            this.getTotal();
-
+        created() 
+        {
+            this.getRecords(this.auditState, 1);
         }
     }
 </script>
