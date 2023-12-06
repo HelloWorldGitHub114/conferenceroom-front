@@ -78,15 +78,15 @@
                         align="center">
                 </el-table-column>
                 <el-table-column
+                    prop="roomFloor"
+                    label="楼层"
+                    width="120"
+                    align="center">
+                </el-table-column>
+                <el-table-column
                         prop="roomName"
                         label="名称"
                         width="200"
-                        align="center">
-                </el-table-column>
-                <el-table-column
-                        prop="roomFloor"
-                        label="楼层"
-                        width="120"
                         align="center">
                 </el-table-column>
                 <el-table-column
@@ -118,7 +118,6 @@
                     <template slot-scope="scope">
                         <el-button type="text" @click="lookDevice(scope.row)">查看</el-button>
                     </template>
-
                 </el-table-column>
 
 
@@ -129,7 +128,7 @@
                         <el-input
                                 v-model="search"
                                 size="mid"
-                                placeholder="输入房号、类型、人数等"/>
+                                placeholder="输入房号、名字、人数等搜索"/>
                     </template>
 
 
@@ -173,52 +172,69 @@
 
 
 <!--            查看设备的表格-->
-            <el-dialog title="设备" :visible.sync="dialogTableVisible">
-                <el-table
+            <el-dialog title="详细信息" :visible.sync="dialogTableVisible" width="70%">
+              <el-form v-if="selectedRow" label-position="top" label-width="80px">
+                <el-row>
+                  <el-col :span="12">
+                    <el-form-item label="会议室图片" style="font-weight: bold">
+                        <img :src=selectedRow.roomPhoto alt="会议室图片" style="margin-top: 10px">
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                      <el-form-item>
+                        <span slot="label" style="font-weight: bold;">会议室描述</span>
+                        <span>{{ selectedRow.roomDescription }}</span>
+                      </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-form-item>
+                  <span slot="label" style="font-weight: bold;">会议室设备</span>
+                    <el-table
                         :data="devices"
                         align="center"
                         :row-class-name="tableRowClassName"
-                        >
-                    <el-table-column
-                            prop="dname"
-                            label="设备名称" >
-                    </el-table-column>
-                    <el-table-column
-                            label="数量" align="center">
+                    >
+                      <el-table-column
+                          prop="dname"
+                          label="设备名称" >
+                      </el-table-column>
+                      <el-table-column
+                          label="数量" align="center">
                         <template slot-scope="scope">
-                             <el-input-number v-model="scope.row.dnumber" @change="handleChange(scope.row.did,scope.row.dnumber)" :min="0"  label="设备数量"></el-input-number>
+                          <el-input-number v-model="scope.row.dnumber" @change="handleChange(scope.row.did,scope.row.dnumber)" :min="0"  label="设备数量"></el-input-number>
                         </template>
-                    </el-table-column>
+                      </el-table-column>
 
-                    <el-table-column  label="操作" align="center" >
+                      <el-table-column  label="操作" align="center" >
                         <template slot-scope="scope">
-                            <el-button
-                                    size="medium"
-                                    @click="handleEditDevice(scope.row)"
-                                    icon="el-icon-edit"
-                                    circle
-                                    type="warning"
-                                    style="margin-right: 10px"
-                            ></el-button>
+                          <el-button
+                              size="medium"
+                              @click="handleEditDevice(scope.row)"
+                              icon="el-icon-edit"
+                              circle
+                              type="warning"
+                              style="margin-right: 10px"
+                          ></el-button>
 
-                            <template>
-                                <el-popconfirm
-                                        title="确定删除该设备吗？"
-                                        @onConfirm="handleDeleteDevice(scope.row)"
-                                >
-                                    <el-button
-                                            slot="reference"
-                                            size="medium"
-                                            type="danger"
-                                            circle
-                                            icon="el-icon-delete"
-                                    ></el-button>
-                                </el-popconfirm>
-                            </template>
+                          <template>
+                            <el-popconfirm
+                                title="确定删除该设备吗？"
+                                @onConfirm="handleDeleteDevice(scope.row)"
+                            >
+                              <el-button
+                                  slot="reference"
+                                  size="medium"
+                                  type="danger"
+                                  circle
+                                  icon="el-icon-delete"
+                              ></el-button>
+                            </el-popconfirm>
+                          </template>
                         </template>
-                    </el-table-column>
-
-                </el-table>
+                      </el-table-column>
+                    </el-table>
+                  </el-form-item>
+                </el-form>
             </el-dialog>
 
 <!--            添加设备或者修改的表单-->
@@ -242,6 +258,7 @@
 </template>
 
 <script>
+
     export default {
         name: "conference_room",
         data(){
@@ -253,7 +270,6 @@
                        "dname":'',
                        "dnumber":'',
                         "roomID":'',
-
                     }
                 ],
 
@@ -267,6 +283,8 @@
                 dialogFormVisible:false,
 
                 dialogTableVisible:false,
+
+                selectedRow:null,
 
                 //查出没有重复的条件 进行筛选 后台数据用list嵌套map传到前端
                 floors:[{
@@ -291,7 +309,9 @@
                     roomFloor: 11,
                     roomSize: '300',
                     roomArea: 11,
-                    roomState: 1
+                    roomState: 1,
+                    roomPhoto:'https://album.biliimg.com/bfs/new_dyn/ffa6c350f8bc920c7b78d890915c5bb68002550.jpg@135h_1s_!web-comment-note.webp',
+                    roomDescription: '这是一个会议室'
                 }],
                 dialog: false,
 
@@ -383,61 +403,62 @@
                 })
             } ,
 
+          addDevice() {
+            this.$refs['deviceFormRules'].validate((valid) => {
+              if (valid) {
+                let flag = this.deviceForm.did;
+                let _this = this;
+                _this.axios.post("/device/add", _this.deviceForm, {
+                  headers: {
+                    "Authorization": localStorage.getItem("token")
+                  }
+                }).then(res => {
+                  if(flag === null || flag === '' ) {
+                    _this.$message.success("添加成功")
 
-            addDevice() {
-                this.$refs['deviceFormRules'].validate((valid) => {
-                    if (valid) {
-                    let flag = this.deviceForm.did;
-                        let _this = this;
-                        _this.axios.post("/device/add", _this.deviceForm, {
-                            headers: {
-                                "Authorization": localStorage.getItem("token")
-                            }
-                        }).then(res => {
-                            if(flag === null || flag === '' ) {
-                                _this.$message.success("添加成功")
+                    _this.deviceForm = {
+                      "did":'',
+                      "roomID": '',
+                      "dname": '',
+                      "dnumber": '',
+                    };
 
-                                _this.deviceForm = {
-                                    "did":'',
-                                    "roomID": '',
-                                    "dname": '',
-                                    "dnumber": '',
-                                };
+                    _this.dialogFormVisible = false;
+                  }
+                  else {
+                    _this.$message.success("修改成功")
+                    //刷新表格
+                    _this.axios.get("/device/listby/"+_this.deviceForm.roomID,{
+                      headers:{
+                        "Authorization":localStorage.getItem("token")
+                      }
+                    }).then(res=>{
+                      _this.devices = res.data.data;
+                    });
+                    _this.deviceForm = {
+                      "did":'',
+                      "roomID": '',
+                      "dname": '',
+                      "dnumber": '',
+                    };
 
-                                _this.dialogFormVisible = false;
-                            }
-                            else {
-                                _this.$message.success("修改成功")
-                                //刷新表格
-                                _this.axios.get("/device/listby/"+_this.deviceForm.roomID,{
-                                    headers:{
-                                        "Authorization":localStorage.getItem("token")
-                                    }
-                                }).then(res=>{
-                                    _this.devices = res.data.data;
-                                });
-                                _this.deviceForm = {
-                                    "did":'',
-                                    "roomID": '',
-                                    "dname": '',
-                                    "dnumber": '',
-                                };
+                    _this.dialogFormVisible = false;
+                  }
 
-                                _this.dialogFormVisible = false;
-                            }
-
-                        })
+                })
 
 
-                    } else {
-                        console.log('error submit!!');
-                        return false;
-                    }
-                });
-            },
+              } else {
+                console.log('error submit!!');
+                return false;
+              }
+            });
+          },
 
           //这里应该展示全面的信息而不是设备，以后改
             lookDevice(row){
+                this.dialogTableVisible = true;
+                this.selectedRow = row;
                 let roomID = row.roomID;
                 let _this = this;
                 _this.axios.get("/device/listby/"+roomID,{
@@ -446,7 +467,6 @@
                     }
                 }).then(res=>{
                     _this.devices = res.data.data;
-                    this.dialogTableVisible = true;
                 })
 
             },

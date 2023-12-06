@@ -94,8 +94,8 @@
                     <el-table-column type="expand">
                         <template slot-scope="props">
                             <el-form label-position="left" inline class="demo-table-expand">
-                                <el-form-item label="会议室类型">
-                                    <span>{{ props.row.roomType }}</span>
+                                <el-form-item label="会议室名字">
+                                    <span>{{ props.row.roomName }}</span>
                                 </el-form-item>
                                 <el-form-item label="会议摘要">
                                     <span>{{ props.row.digest }}</span>
@@ -173,8 +173,8 @@
                     <el-table-column type="expand">
                         <template slot-scope="props">
                             <el-form label-position="left" inline class="demo-table-expand">
-                                <el-form-item label="会议室类型">
-                                    <span>{{ props.row.roomType }}</span>
+                                <el-form-item label="会议室名字">
+                                    <span>{{ props.row.roomName }}</span>
                                 </el-form-item>
                                 <el-form-item label="会议摘要">
                                     <span>{{ props.row.digest }}</span>

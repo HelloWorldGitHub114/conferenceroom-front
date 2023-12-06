@@ -6,14 +6,15 @@
 
 
                 <div class="mConditions" style="margin-left: 20px;margin-bottom: 10px">
-                    <el-select  v-model="depName" clearable placeholder="" @change="change">
-                        <el-option
-                                v-for="item in depNames"
-                                :key="item.depName"
-                                :label="item.depName"
-                                :value="item.depName">
-                        </el-option>
-                    </el-select>
+                  <el-date-picker
+                      class="mselect"
+                      v-model="searchDate"
+                      type="date"
+                      placeholder="选择预约日期"
+                      :picker-options="pickerOptions"
+                      default-time="10:00:00"
+                      value-format="yyyy-MM-dd"
+                  ></el-date-picker>
                 </div>
 
                 <el-table
@@ -25,8 +26,8 @@
                     <el-table-column type="expand">
                         <template slot-scope="props">
                             <el-form label-position="left" inline class="demo-table-expand">
-                                <el-form-item label="会议室类型">
-                                    <span>{{ props.row.roomType }}</span>
+                                <el-form-item label="会议室名字">
+                                    <span>{{ props.row.roomName }}</span>
                                 </el-form-item>
                                 <el-form-item label="会议摘要">
                                     <span>{{ props.row.digest }}</span>
@@ -59,7 +60,7 @@
                             align="center">
                     </el-table-column>
                     <el-table-column
-                            label="会议室名称"
+                            label="会议室名字"
                             prop="roomName"
                             align="center">
                     </el-table-column>
@@ -127,10 +128,10 @@
                     <el-table-column type="expand">
                         <template slot-scope="props">
                             <el-form label-position="left" inline class="demo-table-expand">
-                                <el-form-item label="会议室类型">
-                                    <span>{{ props.row.roomType }}</span>
+                                <el-form-item label="会议室名字">
+                                    <span>{{ props.row.roomName }}</span>
                                 </el-form-item>
-                                <el-form-item label="会议摘要">
+                                <el-form-item label="会议介绍">
                                     <span>{{ props.row.digest }}</span>
                                 </el-form-item>
                                 <el-form-item label="会议人数">
@@ -165,7 +166,7 @@
                             align="center">
                     </el-table-column>
                     <el-table-column
-                            label="申请部门"
+                            label="申请人"
                             prop="depName"
                             align="center">
                     </el-table-column>
@@ -231,8 +232,8 @@
                                 <el-form-item label="审核时间">
                                     <span>{{ props.row.auditTime }}</span>
                                 </el-form-item>
-                                <el-form-item label="会议室类型">
-                                    <span>{{ props.row.roomType }}</span>
+                                <el-form-item label="会议室名字">
+                                    <span>{{ props.row.roomName }}</span>
                                 </el-form-item>
                                 <el-form-item label="会议摘要">
                                     <span>{{ props.row.digest }}</span>
@@ -265,7 +266,7 @@
                             align="center">
                     </el-table-column>
                     <el-table-column
-                            label="申请部门"
+                            label="申请人"
                             prop="depName"
                             align="center">
                     </el-table-column>
@@ -331,219 +332,218 @@
                         "theme": "asdas",
                         "personCount": 12,
                         "digest": "asdasd",
+                        "depName":'qww',
                         "depNo": "007",
-                        "depName": "abc",
                         "depEmail":"6191220122@qq.com",
+                        "userName":'1',
                         "roomID": null,
                         "roomNo": "302",
                         "roomFloor": "14",
-                        "roomType": "小多媒体会议室",
+                        "roomName": "小多媒体会议室",
                     },
 
                 ],
 
-                depNames: [
-                    {"depName": "研发部"}
-                ]
+              searchDate:'',
             }
         },
 
         methods:{
-            handleDelete(row){
-                let _this = this;
-                _this.axios.delete("/record/deleteby/"+row.applyId,{
-                    headers:{
-                        "Authorization":localStorage.getItem("token")
-                    }
-                }).then(res=>{
-                    _this.getRecords(this.depName, this.auditState, this.currentPage);
-                    _this.getTotal();
-                    _this.$message({
-                        message: '删除记录成功',
-                        type: 'success',
-                        center: true
-                    });
-                })
-            },
+          handleDelete(row){
+            let _this = this;
+            _this.axios.delete("/record/deleteby/"+row.applyId,{
+              headers:{
+                "Authorization":localStorage.getItem("token")
+              }
+            }).then(res=>{
+              _this.getRecords(this.depName, this.auditState, this.currentPage);
+              _this.getTotal();
+              _this.$message({
+                message: '删除记录成功',
+                type: 'success',
+                center: true
+              });
+            })
+          },
 
-            reject(row){
-                this.$prompt('请输入驳回理由', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                }).then(({ value }) => {
-                        let map = {
-                            "applyId":row.applyId,
-                            "roomID":row.roomID,
-                            "startTime":row.startTime,
-                            "endTime":row.endTime,
-                            "auditState":2,
-                            "rejectReason":value,
-                            "roomFloor":row.roomFloor,
-                            "roomNo":row.roomNo,
-                            "theme":row.theme,
-                            "depEmail":row.depEmail,
-                            "applyTime":row.applyTime,
-                            "result":'申请被驳回'
-                        };
+          reject(row){
+            this.$prompt('请输入驳回理由', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+            }).then(({ value }) => {
+              let map = {
+                "applyId":row.applyId,
+                "roomId":row.roomId,
+                "startTime":row.startTime,
+                "endTime":row.endTime,
+                "auditState":2,
+                "rejectReason":value,
+                "roomFloor":row.roomFloor,
+                "roomNo":row.roomNo,
+                "theme":row.theme,
+                "depEmail":row.depEmail,
+                "applyTime":row.applyTime,
+                "result":'申请被驳回'
+              };
 
-                        let _this = this;
-                        _this.axios.put("/record/changeauditstate",map,{
-                            headers:{
-                                "Authorization":localStorage.getItem("token")
-                            }
-                        }).then(res=>{
-
-                            _this.getRecords(this.depName, this.auditState, this.currentPage);
-                            _this.$message({
-                                message: '驳回申请成功',
-                                type: 'success',
-                                center: true
-                            });
-                        })
-                })
-            },
-
-           access(row) {
-                let map = {
-                    "applyId":row.applyId,
-                    "roomID":row.roomID,
-                    "startTime":row.startTime,
-                    "endTime":row.endTime,
-                    "auditState":1,
-                    "roomFloor":row.roomFloor,
-                    "roomNo":row.roomNo,
-                    "theme":row.theme,
-                    "depEmail":row.depEmail,
-                    "applyTime":row.applyTime,
-                    "result":'申请通过'
-
-
-                };
-
-                let _this = this;
-                _this.axios.put("/record/changeauditstate",map,{
-                    headers:{
-                        "Authorization":localStorage.getItem("token")
-                    }
-                }).then(res=>{
-                    _this.$message({
-                        message: '通过申请成功',
-                        type: 'success',
-                        center: true
-                    });
-
-                    _this.getRecords(this.depName, this.auditState, this.currentPage);
-                })
-            },
-            change(){
-                this.currentPage=1;
-                this.getRecords(this.depName, this.auditState, 1);
-            },
-
-            tableRowClassName({row, rowIndex}) {
-                if (rowIndex === 1) {
-                    return 'warning-row';
-                } else if (rowIndex === 3) {
-                    return 'success-row';
-                } else if (rowIndex === 5) {
-                    return 'warning-row';
+              let _this = this;
+              _this.axios.put("/record/changeauditstate",map,{
+                headers:{
+                  "Authorization":localStorage.getItem("token")
                 }
-                return '';
-            },
+              }).then(res=>{
 
-            handleCurrentChange(currentPage) {
-                this.getRecords(this.depName, this.auditState, currentPage);
-            },
-
-            getRecords(depName, auditState, currentPage) {
-
-                //JSON格式转一下 防止为空的时候不能传递参数
-                let name = JSON.stringify(depName);
-
-                //查看所有记录
-                let deleted = null;
-                deleted = JSON.stringify(deleted);
-                let _this = this;
-                _this.axios.get("/record/listbyconditions/" + auditState + "/" + name + "/" + currentPage+"/"+deleted, {
-                    headers: {
-                        "Authorization": localStorage.getItem("token")
-                    }
-                }).then(res => {
-                    _this.formData = res.data.data;
-                    console.log(_this.formData);
-                    if(_this.formData.length===0){
-
-
-                        let newCurrentPage;
-                        //不等于1的情况下 才要-1
-                        if(currentPage!==1) {
-                            newCurrentPage = currentPage - 1;
-                        }else{
-                            newCurrentPage = currentPage;
-                        }
-                        //在审核当前页面最后一个申请时，审核完 刷新数据 但是还是提交的当前页面的页码 查出来肯定是没有数据的。所以页码要减一来查
-                        //url不能进行计算
-                        _this.axios.get("/record/listbyconditions/" + auditState + "/" + name + "/" +newCurrentPage+"/"+deleted, {
-                            headers: {
-                                "Authorization": localStorage.getItem("token")
-                            }
-                        }).then(res => {
-                            _this.formData = res.data.data;
-                            _this.currentPage  = newCurrentPage;
-
-                        })
-                    }else {
-
-                        //不是这种情况的话就还是等于当前页面
-                        _this.currentPage = currentPage;
-                    }
+                _this.getRecords(this.depName, this.auditState, this.currentPage);
+                _this.$message({
+                  message: '驳回申请成功',
+                  type: 'success',
+                  center: true
                 });
+              })
+            })
+          },
 
-            },
+          access(row) {
+            let map = {
+              "applyId":row.applyId,
+              "roomId":row.roomId,
+              "startTime":row.startTime,
+              "endTime":row.endTime,
+              "auditState":1,
+              "roomFloor":row.roomFloor,
+              "roomNo":row.roomNo,
+              "theme":row.theme,
+              "depEmail":row.depEmail,
+              "applyTime":row.applyTime,
+              "result":'申请通过'
 
-            getTotal(){
-                let name = JSON.stringify(this.depName);
-                let deleted = null; //只查出没有被部门进行删除的
-                deleted = JSON.stringify(deleted);
-                let _this = this;
-                _this.axios.get("/record/gettotalbyconditions/" + _this.auditState + "/" + name+"/"+deleted, {
-                    headers: {
-                        "Authorization": localStorage.getItem("token")
-                    }
-                }).then(res => {
-                    _this.total = res.data.data;
-                });
-            },
 
-            handleClick() {
-                //换状态时  depName重新为空
-                this.getRecords(this.depName, this.auditState, 1)
-                this.getTotal();
-                this.currentPage = 1;
-            },
+            };
 
-            getAllDeps(){
-                let _this = this;
-                _this.axios.get("/department/getalldeps",{
-                    headers:{
-                        "Authorization":localStorage.getItem("token")
-                    }
-                }).then(res=>{
-                    _this.depNames = res.data.data;
-                })
+            let _this = this;
+            _this.axios.put("/record/changeauditstate",map,{
+              headers:{
+                "Authorization":localStorage.getItem("token")
+              }
+            }).then(res=>{
+              _this.$message({
+                message: '通过申请成功',
+                type: 'success',
+                center: true
+              });
 
+              _this.getRecords(this.depName, this.auditState, this.currentPage);
+            })
+          },
+          change(){
+            this.currentPage=1;
+            this.getRecords(this.depName, this.auditState, 1);
+          },
+
+          tableRowClassName({row, rowIndex}) {
+            if (rowIndex === 1) {
+              return 'warning-row';
+            } else if (rowIndex === 3) {
+              return 'success-row';
+            } else if (rowIndex === 5) {
+              return 'warning-row';
             }
+            return '';
+          },
+
+          handleCurrentChange(currentPage) {
+            this.getRecords(this.depName, this.auditState, currentPage);
+          },
+
+          getRecords(depName, auditState, currentPage) {
+
+            //JSON格式转一下 防止为空的时候不能传递参数
+            let name = JSON.stringify(depName);
+
+            //查看所有记录
+            let deleted = null;
+            deleted = JSON.stringify(deleted);
+            let _this = this;
+            _this.axios.get("/record/listbyconditions/" + auditState + "/" + name + "/" + currentPage+"/"+deleted, {
+              headers: {
+                "Authorization": localStorage.getItem("token")
+              }
+            }).then(res => {
+              _this.formData = res.data.data;
+              console.log(_this.formData);
+              if(_this.formData.length===0){
+
+
+                let newCurrentPage;
+                //不等于1的情况下 才要-1
+                if(currentPage!==1) {
+                  newCurrentPage = currentPage - 1;
+                }else{
+                  newCurrentPage = currentPage;
+                }
+                //在审核当前页面最后一个申请时，审核完 刷新数据 但是还是提交的当前页面的页码 查出来肯定是没有数据的。所以页码要减一来查
+                //url不能进行计算
+                _this.axios.get("/record/listbyconditions/" + auditState + "/" + name + "/" +newCurrentPage+"/"+deleted, {
+                  headers: {
+                    "Authorization": localStorage.getItem("token")
+                  }
+                }).then(res => {
+                  _this.formData = res.data.data;
+                  _this.currentPage  = newCurrentPage;
+
+                })
+              }else {
+
+                //不是这种情况的话就还是等于当前页面
+                _this.currentPage = currentPage;
+              }
+            });
+
+          },
+
+          getTotal(){
+            let name = JSON.stringify(this.depName);
+            let deleted = null; //只查出没有被部门进行删除的
+            deleted = JSON.stringify(deleted);
+            let _this = this;
+            _this.axios.get("/record/gettotalbyconditions/" + _this.auditState + "/" + name+"/"+deleted, {
+              headers: {
+                "Authorization": localStorage.getItem("token")
+              }
+            }).then(res => {
+              _this.total = res.data.data;
+            });
+          },
+
+          handleClick() {
+            //换状态时  depName重新为空
+            this.getRecords(this.depName, this.auditState, 1)
+            this.getTotal();
+            this.currentPage = 1;
+          },
+
+          getAllDeps(){
+            let _this = this;
+            _this.axios.get("/department/getalldeps",{
+              headers:{
+                "Authorization":localStorage.getItem("token")
+              }
+            }).then(res=>{
+              _this.depNames = res.data.data;
+            })
+
+          }
 
         },
 
 
 
-        created() {
-            this.getAllDeps();
-            this.getRecords(this.depName, this.auditState, 1);
-            this.getTotal();
+      created() {
+        this.getAllDeps();
+        this.getRecords(this.depName, this.auditState, 1);
+        this.getTotal();
 
-        }
+      }
     }
 </script>
 

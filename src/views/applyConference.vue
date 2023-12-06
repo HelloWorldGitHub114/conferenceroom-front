@@ -70,27 +70,37 @@
                   style="width: 100%;text-align: center"
                   :row-class-name="this.tableRowClassName">
             <el-table-column
-                    prop="roomNo"
-                    label="房号"
-                    width="150">
+                prop="roomNo"
+                label="房号"
+                width="120"
+                align="center">
             </el-table-column>
             <el-table-column
-                    prop="roomFloor"
-                    label="楼层"
-                    width="150">
+                prop="roomFloor"
+                label="楼层"
+                width="120"
+                align="center">
             </el-table-column>
             <el-table-column
-                    prop="roomName"
-                    label="名称"
-                    width="250">
+                prop="roomName"
+                label="名称"
+                width="200"
+                align="center">
             </el-table-column>
             <el-table-column
-                    prop="roomSize"
-                    label="可容纳人数"
-                    width="180">
+                prop="roomArea"
+                label="面积"
+                width="120"
+                align="center">
+            </el-table-column>
+            <el-table-column
+                prop="roomSize"
+                label="可容纳人数"
+                width="120"
+                align="center">
             </el-table-column>
 
-            <el-table-column label="详细信息" width="180">
+            <el-table-column label="详细信息" width="180" align="center">
                 <template slot-scope="scope">
                     <el-button type="text" @click="lookDevice(scope.row)">查看</el-button>
                 </template>
@@ -104,7 +114,7 @@
                     <el-input
                             v-model="search"
                             size="mid"
-                            placeholder="输入楼层、会议室门牌号、会议室类型等进行搜索"/>
+                            placeholder="输入楼层、会议室门牌号、会议室名字等进行搜索"/>
                 </template>
                 <template slot-scope="scope">
                     <el-button
@@ -138,9 +148,6 @@
                 <el-form-item label="会议人数" prop="personCount">
                   <el-input @blur="examinePersonCount" v-model.number="record.conferenceRecord.personCount" placeholder="会议人数" style="width: 250px"></el-input>
                 </el-form-item>
-
-                <!-- Add more form items for the first column as needed -->
-
               </el-col>
               <el-col :span="12">
                 <!-- Second Column -->
@@ -190,7 +197,23 @@
         </el-dialog>
 
 <!--        查看设备的表格-->
-        <el-dialog title="设备" :visible.sync="dialogTableVisible" style="text-align: center">
+        <el-dialog title="设备" :visible.sync="dialogTableVisible" width="60%">
+          <el-form v-if="selectedRow" label-position="top" label-width="80px">
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="会议室图片" style="font-weight: bold">
+                <img :src=selectedRow.roomPhoto alt="会议室图片" style="margin-top: 10px">
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item>
+                <span slot="label" style="font-weight: bold;">会议室描述</span>
+                <span>{{ selectedRow.roomDescription }}</span>
+              </el-form-item>
+            </el-col>
+          </el-row>
+            <el-form-item>
+              <span slot="label" style="font-weight: bold;">会议室设备</span>
             <el-table
                     :data="devices"
                     style="text-align: center"
@@ -204,14 +227,11 @@
                 <el-table-column
                         prop="dnumber"
                         label="数量"
-
                 >
-
                 </el-table-column>
-
-
-
             </el-table>
+            </el-form-item>
+          </el-form>
         </el-dialog>
     </div>
 </template>
@@ -247,7 +267,7 @@
                     roomFloor:'1'
                 }],
                 types:[{
-                    roomType:'多媒体'
+                    roomName:'多媒体'
                 }],
                 sizes:[{
                     roomSize:100
@@ -256,7 +276,6 @@
                 //与下拉选框双向绑定
                 roomFloor:'',
                 roomSize:'',
-                roomType:'',
                 searchDate:'',
                 searchStartTime:'',
                 searchEndTime:'',
@@ -268,14 +287,20 @@
                 //搜索框
                 search:'',
 
+                //选择查看的列
+                selectedRow: null,
+
                 //表格绑定
                 conferenceRooms: [{
-                    roomID:2,
-                    roomNo: "103",
-                    roomFloor: 1,
-                    roomType: '大多媒体会议室',
-                    roomSize: '300',
-                    roomState: 1
+                  roomID: 2,
+                  roomNo: "003",
+                  roomName: '会议室1',
+                  roomFloor: 11,
+                  roomSize: '300',
+                  roomArea: 11,
+                  roomState: 1,
+                  roomPhoto:'https://album.biliimg.com/bfs/new_dyn/ffa6c350f8bc920c7b78d890915c5bb68002550.jpg@135h_1s_!web-comment-note.webp',
+                  roomDescription: '这是一个会议室'
                 }],
 
                 record:{
@@ -347,6 +372,8 @@
 
         methods:{
             lookDevice(row){
+                this.dialogTableVisible = true;
+                this.selectedRow = row;
                 let roomID = row.roomID;
                 let _this = this;
                 _this.axios.get("/device/listbyapply/"+roomID,{
@@ -355,9 +382,7 @@
                     }
                 }).then(res=>{
                     _this.devices = res.data.data;
-                    this.dialogTableVisible = true;
                 })
-
             },
 
             //检查参与会议人数是否小于等于会议室可容纳人数 并且不能为0
@@ -583,15 +608,6 @@
                 this.dialogFormApply = true;
                 this.record.apply.roomID = row.roomID;
                 this.record.apply.roomSize = row.roomSize;
-
-                //员工还是部门用户
-                let isEmployee = JSON.parse(Cookies.get("userInfo")).depId;
-               if( isEmployee === undefined){
-                   this.record.apply.depId = JSON.parse(Cookies.get("userInfo")).id;
-               }else{
-                   this.record.apply.depId = isEmployee
-               }
-
             },
 
             tableRowClassName({row, rowIndex}) {
