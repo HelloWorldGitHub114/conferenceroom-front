@@ -66,7 +66,7 @@
 
         </div>
         <el-table :data="conferenceRooms.filter(data => !this.search || data.roomNo.toLowerCase().includes(this.search.toLowerCase())||
-                data.roomFloor.toLowerCase().includes(this.search.toLowerCase()) || data.roomType.toLowerCase().includes(this.search.toLowerCase()))"
+                data.roomFloor.toString().toLowerCase().includes(this.search.toLowerCase()) || data.roomName.toLowerCase().includes(this.search.toLowerCase()))"
                   style="width: 100%;text-align: center"
                   :row-class-name="this.tableRowClassName">
             <el-table-column
@@ -104,7 +104,7 @@
                     <el-input
                             v-model="search"
                             size="mid"
-                            placeholder="输入楼层、会议室门牌号、会议室类型等进行搜索"/>
+                            placeholder="请输入房号、楼层、会议室名称进行搜索"/>
                 </template>
                 <template slot-scope="scope">
                     <el-button

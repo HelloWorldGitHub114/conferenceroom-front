@@ -53,12 +53,14 @@
                             prop="UserID"
                             align="center">
                     </el-table-column>
+
                     <el-table-column align="right" >
                         <template slot="header" slot-scope="scope">
                             <el-input
                                     v-model="search"
                                     size="mid"
                                     placeholder="输入主题、房号、申请人ID"/>
+
                         </template>
                         <template slot-scope="scope">
                             <el-button
@@ -68,21 +70,20 @@
                                     type="success"
                                     style="margin-right: 10px"
                             >通 过</el-button>
+                            <el-button
+                                    size="small"
+                                    type="danger"
+                                    round
+                                    @click="reject(scope.row)"
+                            >驳 回</el-button>
+                        </template>
 
-                                    <el-button
-                                            size="small"
-                                            type="danger"
-                                           round
-                                            @click="reject(scope.row)"
-                                    >驳 回</el-button>
-
-                            </template>
                     </el-table-column>
 
                 </el-table>
                 <div style="text-align: center;position:relative;margin-top: 20px">
                     <el-pagination
-                            layout="total,prev, pager, next,jumper"
+                            layout="total,prev,pager,next,jumper"
                             @current-change="handleCurrentChange"
                             :current-page="currentPage"
                             :total="total"
@@ -91,6 +92,7 @@
                     </el-pagination>
                 </div>
             </el-tab-pane>
+
             <el-tab-pane key="admin1" name="1">
                 <span slot="label"><i class="iconfont icontongguo"></i> 已批准</span>
                 
@@ -305,6 +307,7 @@
                         "Authorization":localStorage.getItem("token")
                     }
                 }).then(res=>{
+                    _this.getTotal(this.auditState);
                     _this.getRecords(this.auditState, this.currentPage);
                     _this.$message({
                         message: '删除记录成功',
@@ -339,7 +342,7 @@
                                 "Authorization":localStorage.getItem("token")
                             }
                         }).then(res=>{
-
+                            _this.getTotal(this.auditState);
                             _this.getRecords(this.auditState, this.currentPage);
                             _this.$message({
                                 message: '驳回申请成功',
@@ -375,12 +378,13 @@
                         type: 'success',
                         center: true
                     });
-
+                    _this.getTotal(this.auditState);
                     _this.getRecords(this.auditState, this.currentPage);
                 })
             },
             change(){
                 this.currentPage=1;
+                this.getTotal(this.auditState);
                 this.getRecords(this.auditState, 1);
             },
 
@@ -396,10 +400,11 @@
             },
 
             handleCurrentChange(currentPage) {
+                this.getTotal(this.auditState);
                 this.getRecords(this.auditState, currentPage);
             },
 
-            getRecords(auditState, currentPage)//depName后续删除
+            getRecords(auditState, currentPage)
             {
                 //查看所有记录
                 let deleted = 2;//表示查询所有的记录（不论删除、未删除）
@@ -412,7 +417,7 @@
                     }
                 }).then(res => {
                     _this.formData = res.data.data;
-                    console.log(_this.formData);
+                    // console.log(_this.formData);
                     this.ruleForm = {
                         applyId:"",
                         auditStatus: "",
@@ -453,14 +458,28 @@
             },
 
             handleClick() {
-                this.getRecords(this.auditState, 1)
+                this.getTotal(this.auditState);
+                this.getRecords(this.auditState, 1);
                 this.currentPage = 1;
-            }
+            },
 
+            getTotal(auditState)
+            {
+                let deleted = 2;
+                this.axios.get("/record/gettotal/" + auditState +  "/" + deleted, {
+                    headers: {
+                        "Authorization": localStorage.getItem("token")
+                    }
+                }).then(res => {
+                    this.total = res.data.data;
+                    console.log("Total Records:", this.total);
+                });
+            }
         },
 
         created() 
         {
+            this.getTotal(this.auditState);
             this.getRecords(this.auditState, 1);
         }
     }

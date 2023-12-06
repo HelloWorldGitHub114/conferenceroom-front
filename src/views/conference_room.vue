@@ -68,7 +68,7 @@
 
 
             <el-table :data="conferenceRooms.filter(data => !this.search || data.roomNo.toLowerCase().includes(this.search.toLowerCase())||
-                data.roomFloor.toLowerCase().includes(this.search.toLowerCase()) || data.roomName.toLowerCase().includes(this.search.toLowerCase()))"
+                data.roomFloor.toString().toLowerCase().includes(this.search.toLowerCase()) || data.roomName.toLowerCase().includes(this.search.toLowerCase()))"
                     style="width: 100%;text-align: center"
                     :row-class-name="this.tableRowClassName">
                 <el-table-column
@@ -129,7 +129,7 @@
                         <el-input
                                 v-model="search"
                                 size="mid"
-                                placeholder="输入房号、类型、人数等"/>
+                                placeholder="输入房号、房名、楼层等"/>
                     </template>
 
 
