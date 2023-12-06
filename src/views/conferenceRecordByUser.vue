@@ -13,12 +13,15 @@
                     <el-table-column type="expand">
                         <template slot-scope="props">
                             <el-form label-position="left" inline class="demo-table-expand">
-                                <el-form-item label="会议室名称">
-                                    <span>{{ props.row.roomType }}</span>
+                                <el-form-item label="会议室楼层">
+                                    <span>{{ props.row.roomFloor }}</span>
                                 </el-form-item>
-                                <el-form-item label="申请理由">
+                                <el-form-item label="会议概要">
                                     <span>{{ props.row.digest }}</span>
                                 </el-form-item>
+                              <el-form-item label="会议人数">
+                                <span>{{ props.row.personCount }}</span>
+                              </el-form-item>
                                 <el-form-item label="会议时间">
                                     <span>{{ props.row.startTime}} -- {{props.row.endTime}}</span>
                                 </el-form-item>
@@ -34,20 +37,21 @@
                     </el-table-column>
                     <el-table-column
                         label="预约编号"
-                        prop="roomFloor">
+                        prop="applyId">
                     </el-table-column>
                     <el-table-column
-                            label="会议主题"
-                            prop="theme">
+                        label="会议主题"
+                        prop="theme">
                     </el-table-column>
                     <el-table-column
-                            label="会议室房号"
-                            prop="roomNo">
+                        label="会议室房号"
+                        prop="roomNo">
                     </el-table-column>
-                    <el-table-column
-                            label="会议人数"
-                            prop="personCount">
-                    </el-table-column>
+                  <el-table-column
+                      label="会议室名称"
+                      prop="roomName"
+                      align="center">
+                  </el-table-column>
                     <el-table-column align="right" >
                         <template slot="header" slot-scope="scope">
                             <el-input
@@ -94,12 +98,15 @@
                     <el-table-column type="expand">
                         <template slot-scope="props">
                             <el-form label-position="left" inline class="demo-table-expand">
-                                <el-form-item label="会议室类型">
-                                    <span>{{ props.row.roomType }}</span>
+                                <el-form-item label="会议室楼层">
+                                    <span>{{ props.row.roomFloor }}</span>
                                 </el-form-item>
-                                <el-form-item label="会议摘要">
+                                <el-form-item label="会议概要">
                                     <span>{{ props.row.digest }}</span>
                                 </el-form-item>
+                              <el-form-item label="会议人数">
+                                <span>{{ props.row.personCount }}</span>
+                              </el-form-item>
                                 <el-form-item label="会议时间">
                                     <span>{{ props.row.startTime}} -- {{props.row.endTime}}</span>
                                 </el-form-item>
@@ -111,7 +118,7 @@
                     </el-table-column>
                   <el-table-column
                       label="预约编号"
-                      prop="roomFloor">
+                      prop="applyId">
                   </el-table-column>
                   <el-table-column
                       label="会议主题"
@@ -122,8 +129,8 @@
                       prop="roomNo">
                   </el-table-column>
                   <el-table-column
-                      label="会议人数"
-                      prop="personCount">
+                      label="会议室名称"
+                      prop="roomName">
                   </el-table-column>
                     <el-table-column align="right" >
                         <template slot="header" slot-scope="scope">
@@ -132,13 +139,7 @@
                                     size="mid"
                                     placeholder="输入预约号、主题、房号等"/>
                         </template>
-                        <template slot-scope="scope"  v-if="!isEmployee">
-                            <el-button
-                                size="small"
-                                @click="handleEdit(scope.$index, scope.row)"
-                                round
-                                type="primary"
-                                style="margin-right: 10px">修 改</el-button>
+                        <template slot-scope="scope">
                             <el-button
                                     size="small"
                                     @click="handleEdit(scope.$index, scope.row)"
@@ -173,12 +174,15 @@
                     <el-table-column type="expand">
                         <template slot-scope="props">
                             <el-form label-position="left" inline class="demo-table-expand">
-                                <el-form-item label="会议室类型">
-                                    <span>{{ props.row.roomType }}</span>
+                                <el-form-item label="会议室楼层">
+                                    <span>{{ props.row.roomFloor }}</span>
                                 </el-form-item>
                                 <el-form-item label="会议摘要">
                                     <span>{{ props.row.digest }}</span>
                                 </el-form-item>
+                              <el-form-item label="会议人数">
+                                <span>{{ props.row.personCount }}</span>
+                              </el-form-item>
                                 <el-form-item label="会议时间">
                                     <span>{{ props.row.startTime}} -- {{props.row.endTime}}</span>
                                 </el-form-item>
@@ -196,7 +200,7 @@
                     </el-table-column>
                     <el-table-column
                         label="预约编号"
-                        prop="roomFloor">
+                        prop="applyId">
                     </el-table-column>
                     <el-table-column
                         label="会议主题"
@@ -206,10 +210,11 @@
                         label="会议室房号"
                         prop="roomNo">
                     </el-table-column>
-                    <el-table-column
-                        label="会议人数"
-                        prop="personCount">
-                    </el-table-column>
+                  <el-table-column
+                      label="会议室名称"
+                      prop="roomName"
+                      align="center">
+                  </el-table-column>
 
 
                     <el-table-column align="right" >
@@ -254,8 +259,9 @@
 
 <script>
     import Cookies from 'js-cookie';
+    import Id from "element-ui/src/locale/lang/id";
     export default {
-        name: "ConferenceRecordByDep",
+        name: "ConferenceRecordByUser",
         data(){
             return{
                 isEmployee:false,
@@ -272,20 +278,17 @@
                     "theme": "会议室主题",
                     "personCount": 12,
                     "digest": "asdasd",
-                    "depNo": "007",
-                    "depName": "公关部",
                     "roomID": null,
                     "roomNo": "302",
                     "roomFloor": "14",
-                    "roomType": "小多媒体会议室"
+                    "roomName": "小多媒体会议室"
                  },
-
                 ],
-                depName:'',
                 search:'',
                 currentPage:1,
                 total:1,
                 pageSize:7,
+                id:''
             }
         },
         methods: {
@@ -327,11 +330,9 @@
             },
 
             getTotal(){
-                let name = JSON.stringify(this.depName);
                 let _this = this;
-                let deleted = 0; //只查出没有被部门进行删除的
-                deleted = JSON.stringify(deleted);
-                this.axios.get("/record/gettotalbyconditions/" + _this.auditState + "/" + name+"/"+deleted, {
+                console.log(_this.id);
+                this.axios.get("/record/gettotalbyuser/" + _this.id + "/" + _this.auditState, {
                     headers: {
                         "Authorization": localStorage.getItem("token")
                     }
@@ -340,13 +341,10 @@
                 });
             },
 
-            getRecords(depName, auditState, currentPage) {
-                //因为管理员那个模块中 是可以选择部门来查看记录  但是当部门为空时就是查询所有 但是为空传递不了参数 所以要用
-                let name = JSON.stringify(depName);
-                let deleted = 0; //只查出没有被部门进行删除的
-                deleted = JSON.stringify(deleted);
+            getRecords(auditState, currentPage)
+            {
                 let _this = this;
-                this.axios.get("/record/listbyconditions/" + auditState + "/" + name + "/" + currentPage+"/"+deleted, {
+                this.axios.get("/record/getbyuser/" + _this.id + "/" + _this.auditState + "/" + _this.currentPage, {
                     headers: {
                         "Authorization": localStorage.getItem("token")
                     }
@@ -375,48 +373,16 @@
             },
 
             handleCurrentChange(currentPage) {
-                this.getRecords(this.depName, this.auditState, currentPage);
+                this.getRecords(this.auditState, currentPage);
             },
-
-
-
         },
-
             created() {
-                //获取到depName
-                let depId = JSON.parse(Cookies.get("userInfo")).depId;
+                let _this = this;
+                this.id = JSON.parse(Cookies.get("userInfo")).userID;
+                console.log(this.id);
+                _this.getTotal();
+                _this.getRecords(_this.auditState,1);
 
-                //部门用户
-                if (depId === undefined) {
-                    let id = JSON.parse(Cookies.get("userInfo")).id;
-                    let _this = this;
-                    this.axios.get("/department/getby/" + id, {
-                        headers: {
-                            "Authorization": localStorage.getItem("token")
-                        }
-                    }).then(res => {
-                        _this.depName = res.data.data.depName;
-                        //先显示审核通过的
-                        _this.getRecords(_this.depName, _this.auditState, 1);
-                        _this.getTotal();
-                    })
-                } else {
-                    this.isEmployee = true;
-                    //员工用户
-                    let _this = this;
-                    this.axios.get("/department/getby/" + depId, {
-                        headers: {
-                            "Authorization": localStorage.getItem("token")
-                        }
-                    }).then(res => {
-                        _this.depName = res.data.data.depName;
-                        //先显示审核通过的
-                        _this.getRecords(_this.depName, _this.auditState, 1);
-                        _this.getTotal();
-                    })
-
-
-                }
             }
     }
 </script>

@@ -3,16 +3,12 @@ import VueRouter from 'vue-router'
 import login from '../views/login'
 import error from '../views/error'
 import index from '../views/index'
-import department from '../views/department'
 import conference_room from "../views/conference_room";
-import departmentInfo from "../views/departmentInfo";
 import applyConference from "../views/applyConference";
-import conferenceRecordByDep from "../views/conferenceRecordByDep";
+import conferenceRecordByUser from "../views/conferenceRecordByUser";
 import conferenceRecordByAdmin from "../views/conferenceRecordByAdmin";
 import home from '../views/home';
-import applyConferenceByAdmin from "../views/applyConferenceByAdmin";
 import device from '../views/device'
-import employeeInfo from "../views/employeeInfo";
 
 
 Vue.use(VueRouter);
@@ -45,17 +41,6 @@ Vue.use(VueRouter);
           name:'home',
           component:home,
         },
-
-        {
-          path:"/department",
-          name:'department',
-          component:department,
-          meta:{
-            title:'部门管理',
-            requireAuth:true,
-            role:['admin']
-          }
-        },
         {
           path:"/conference_room",
           name:'conference_room',
@@ -64,26 +49,6 @@ Vue.use(VueRouter);
             title:'会议室管理',
             requireAuth:true,
             role:['admin']
-          }
-        },
-        {
-          path:"/departmentInfo",
-          name:'departmentInfo',
-          component:departmentInfo,
-          meta:{
-            title:'部门信息',
-            requireAuth:true,
-            role:['user']
-          }
-        },
-        {
-          path:"/employeeInfo",
-          name:'employeeInfo',
-          component:employeeInfo,
-          meta:{
-            title:'员工信息',
-            requireAuth:true,
-            role:['user']
           }
         },
         {
@@ -97,9 +62,9 @@ Vue.use(VueRouter);
           }
         },
         {
-          path:"/conferenceRecordByDep",
-          name:'conferenceRecordByDep',
-          component:conferenceRecordByDep,
+          path:"/conferenceRecordByUser",
+          name:'conferenceRecordByUser',
+          component:conferenceRecordByUser,
           meta:{
             title:'查看申请记录',
             requireAuth:true,
@@ -117,17 +82,6 @@ Vue.use(VueRouter);
           }
         },
         {
-          path:"/applyConferenceByAdmin",
-          name:'applyConferenceByAdmin',
-          component:applyConferenceByAdmin,
-          meta:{
-            title:'紧急申请',
-            requireAuth:true,
-            role:['admin']
-          }
-        },
-
-        {
           path:"/device",
           name:'device',
           component:device,
@@ -141,7 +95,6 @@ Vue.use(VueRouter);
       ]
 
     },
-
 
     {
       path:'*',
