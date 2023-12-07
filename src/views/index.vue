@@ -21,7 +21,7 @@
               <span slot="title">会议室申请</span>
             </template>
             <el-menu-item index="/applyConference" >申请会议室</el-menu-item>
-            <el-menu-item index="/conferenceRecordByDep">查看记录</el-menu-item>
+            <el-menu-item index="/conferenceRecordByUser">查看记录</el-menu-item>
           </el-submenu>
 
           <el-menu-item index="/conference_room" :disabled="!isAdmin">

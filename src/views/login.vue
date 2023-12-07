@@ -40,7 +40,7 @@
 
                     <el-form-item>
                         <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
-                        <el-button @click="resetForm('ruleForm')">重置</el-button>
+                        <el-button @click="resetForm('ruleForm')">重置输入</el-button>
                     </el-form-item>
                 </el-form>
             </el-col>
@@ -56,13 +56,13 @@
                         </el-alert>
                     </div>
                     <el-alert
-                            title="账号为学号，初始密码为123456，可登录后自行修改"
+                            title="测试用账号：adminn 密码：adminn"
                             type="info"
                             show-icon
                     :closable="false">
                     </el-alert>
                     <el-alert
-                            title="联系管理员：xxxxxxxxx@qq.com"
+                            title="如有问题可联系管理员：xxxxxxxxx@qq.com"
                             type="info"
                             show-icon
                             :closable="false">
@@ -109,14 +109,14 @@
                         _this.$store.commit('SET_USERINFO',userInfo);
 
                         _this.$message({
-                          message: '恭喜你登录成功!!!!',
+                          message: '登录成功!',
                           type: 'success'
                         });
 
                         _this.$router.push("/index");
                       });
                     } else {
-                        console.log('error submit!!');
+                        console.log('提交信息有误');
                         return false;
                     }
                 });
