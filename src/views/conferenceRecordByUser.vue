@@ -19,9 +19,9 @@
                                 <el-form-item label="会议概要">
                                     <span>{{ props.row.digest }}</span>
                                 </el-form-item>
-                              <el-form-item label="会议人数">
-                                <span>{{ props.row.personCount }}</span>
-                              </el-form-item>
+                                <el-form-item label="会议人数">
+                                  <span>{{ props.row.personCount }}</span>
+                                </el-form-item>
                                 <el-form-item label="会议时间">
                                     <span>{{ props.row.startTime}} -- {{props.row.endTime}}</span>
                                 </el-form-item>
@@ -101,9 +101,6 @@
                                 <el-form-item label="会议室楼层">
                                     <span>{{ props.row.roomFloor }}</span>
                                 </el-form-item>
-                                <el-form-item label="会议室名字">
-                                  <span>{{ props.row.roomName }}</span>
-                                </el-form-item>
                                 <el-form-item label="会议概要">
                                     <span>{{ props.row.digest }}</span>
                                 </el-form-item>
@@ -179,9 +176,6 @@
                             <el-form label-position="left" inline class="demo-table-expand">
                                 <el-form-item label="会议室楼层">
                                     <span>{{ props.row.roomFloor }}</span>
-                                </el-form-item>
-                                <el-form-item label="会议室名字">
-                                    <span>{{ props.row.roomName }}</span>
                                 </el-form-item>
                                 <el-form-item label="会议摘要">
                                     <span>{{ props.row.digest }}</span>
@@ -278,7 +272,7 @@
                     "auditStatus": null,
                     "applyTime": "2023-12-5 10:52:11",
                     "auditTime": "2023-12-5 11:45:14",
-                    "rejectReason": null,
+                    "rejectReason": 'no',
                     "startTime": "2023-12-24 02:54:59",
                     "endTime": "2023-12-24 03:55:02",
                     "theme": "会议室主题",

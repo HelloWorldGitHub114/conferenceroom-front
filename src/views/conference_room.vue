@@ -177,7 +177,7 @@
                 <el-row>
                   <el-col :span="12">
                     <el-form-item label="会议室图片" style="font-weight: bold">
-                        <img :src=selectedRow.roomPhoto alt="会议室图片" style="margin-top: 10px">
+                        <img :src=selectedRow.roomPhoto alt="会议室图片" style="margin-top: 10px" loading="lazy">
                     </el-form-item>
                   </el-col>
                   <el-col :span="12">

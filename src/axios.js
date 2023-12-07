@@ -5,7 +5,7 @@ import Element from 'element-ui';
 
 
 //配置基本请求路径 然后在axios中的请求路径都可以写成“/xxx”  = “http://localhost:8082/xxx”
-axios.defaults.baseURL="http://localhost:8080"
+axios.defaults.baseURL="http://localhost:9000"
 
 
 //前置拦截np,
