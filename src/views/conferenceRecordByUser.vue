@@ -37,7 +37,8 @@
                     </el-table-column>
                     <el-table-column
                         label="预约编号"
-                        prop="applyId">
+                        prop="applyId"
+                        sortable>
                     </el-table-column>
                     <el-table-column
                         label="会议主题"
@@ -45,7 +46,8 @@
                     </el-table-column>
                     <el-table-column
                         label="会议室房号"
-                        prop="roomNo">
+                        prop="roomNo"
+                        sortable>
                     </el-table-column>
                   <el-table-column
                       label="会议室名称"
@@ -118,7 +120,8 @@
                     </el-table-column>
                   <el-table-column
                       label="预约编号"
-                      prop="applyId">
+                      prop="applyId"
+                      sortable>
                   </el-table-column>
                   <el-table-column
                       label="会议主题"
@@ -126,7 +129,8 @@
                   </el-table-column>
                   <el-table-column
                       label="会议室房号"
-                      prop="roomNo">
+                      prop="roomNo"
+                      sortable>
                   </el-table-column>
                   <el-table-column
                       label="会议室名称"
@@ -200,7 +204,8 @@
                     </el-table-column>
                     <el-table-column
                         label="预约编号"
-                        prop="applyId">
+                        prop="applyId"
+                        sortable>
                     </el-table-column>
                     <el-table-column
                         label="会议主题"
@@ -208,7 +213,8 @@
                     </el-table-column>
                     <el-table-column
                         label="会议室房号"
-                        prop="roomNo">
+                        prop="roomNo"
+                        sortable>
                     </el-table-column>
                   <el-table-column
                       label="会议室名称"
@@ -377,6 +383,7 @@
             },
         },
             created() {
+                console.log(Cookies.get("userInfo"));
                 let _this = this;
                 this.id = JSON.parse(Cookies.get("userInfo")).userID;
                 console.log(this.id);

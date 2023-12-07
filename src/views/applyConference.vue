@@ -73,13 +73,15 @@
                 prop="roomNo"
                 label="房号"
                 width="120"
-                align="center">
+                align="center"
+                sortable>
             </el-table-column>
             <el-table-column
                 prop="roomFloor"
                 label="楼层"
                 width="120"
-                align="center">
+                align="center"
+                sortable>
             </el-table-column>
             <el-table-column
                 prop="roomName"
@@ -91,13 +93,15 @@
                 prop="roomArea"
                 label="面积"
                 width="120"
-                align="center">
+                align="center"
+                sortable>
             </el-table-column>
             <el-table-column
                 prop="roomSize"
                 label="可容纳人数"
                 width="120"
-                align="center">
+                align="center"
+                sortable>
             </el-table-column>
 
             <el-table-column label="详细信息" width="180" align="center">
@@ -202,7 +206,7 @@
           <el-row>
             <el-col :span="12">
               <el-form-item label="会议室图片" style="font-weight: bold">
-                <img :src=selectedRow.roomPhoto alt="会议室图片" style="margin-top: 10px">
+                <img :src=selectedRow.roomPhoto alt="会议室图片" style="margin-top: 10px;max-width: 400px;max-height: 200px;" loading="lazy">
               </el-form-item>
             </el-col>
             <el-col :span="12">

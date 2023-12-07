@@ -47,7 +47,8 @@
                     <el-table-column
                             label="预约编号"
                             prop="applyId"
-                            align="center">
+                            align="center"
+                            sortable>
                     </el-table-column>
                     <el-table-column
                             label="会议主题"
@@ -57,7 +58,8 @@
                     <el-table-column
                             label="会议室房号"
                             prop="roomNo"
-                            align="center">
+                            align="center"
+                            sortable>
                     </el-table-column>
                     <el-table-column
                             label="会议室名字"
@@ -143,7 +145,8 @@
                     <el-table-column
                             label="预约编号"
                             prop="applyId"
-                            align="center">
+                            align="center"
+                            sortable>
                     </el-table-column>
                     <el-table-column
                             label="会议主题"
@@ -153,7 +156,8 @@
                     <el-table-column
                             label="会议室房号"
                             prop="roomNo"
-                            align="center">
+                            align="center"
+                            sortable>
                     </el-table-column>
                     <el-table-column
                             label="会议室名称"
@@ -233,7 +237,8 @@
                     <el-table-column
                             label="预约编号"
                             prop="applyId"
-                            align="center">
+                            align="center"
+                            sortable>
                     </el-table-column>
                     <el-table-column
                             label="会议主题"
@@ -243,7 +248,8 @@
                     <el-table-column
                             label="会议室房号"
                             prop="roomNo"
-                            align="center">
+                            align="center"
+                            sortable>
                     </el-table-column>
                     <el-table-column
                             label="会议室名称"
