@@ -265,7 +265,6 @@
 
 <script>
     import Cookies from 'js-cookie';
-    import Id from "element-ui/src/locale/lang/id";
     export default {
         name: "ConferenceRecordByUser",
         data(){
@@ -276,29 +275,28 @@
                     {
                     "applyId": 1,
                     "auditStatus": null,
-                    "applyTime": "2023-12-5 10:52:11",
-                    "auditTime": "2023-12-5 11:45:14",
+                    "applyTime": "2023-12-17 20:00:00",
+                    "auditTime": "2023-12-17 21:00:00",
                     "rejectReason": 'no',
-                    "startTime": "2023-12-24 02:54:59",
-                    "endTime": "2023-12-24 03:55:02",
-                    "theme": "会议室主题",
+                    "startTime": "2023-12-24 11:45:14",
+                    "endTime": "2023-12-24 19:19:10",
+                    "theme": "this is theme",
                     "personCount": 12,
-                    "digest": "asdasd",
-                    "roomID": null,
-                    "roomNo": "302",
-                    "roomFloor": "14",
-                    "roomName": "小多媒体会议室"
+                    "digest": "diggggest",
+                    "roomID": 1,
+                    "roomNo": "101",
+                    "roomFloor": "1",
+                    "roomName": "多媒体会议室"
                  },
                 ],
                 search:'',
                 currentPage:1,
                 total:1,
                 pageSize:7,
-                id:''
+                userID:'1001'
             }
         },
         methods: {
-
             handleDelete(row){
                let _this = this;
                _this.axios.delete("/record/delete/"+row.applyId,{
@@ -306,8 +304,8 @@
                        "Authorization":localStorage.getItem("token")
                    }
                }).then(res=>{
-                   _this.getRecords(this.depName, this.auditState, this.currentPage);
-                   _this.getTotal();
+                    _this.getTotal();
+                   _this.getRecords(this.auditState, this.currentPage);
                    _this.$message({
                        message: '删除记录成功',
                        type: 'success',
@@ -323,10 +321,8 @@
                         "Authorization": localStorage.getItem("token")
                     }
                 }).then(res => {
-
-                    //加分页了 这里这个1要更改
-                    _this.getRecords(this.depName, this.auditState, this.currentPage);
-
+                  _this.getTotal();
+                    _this.getRecords(this.auditState, this.currentPage);
                     _this.$message({
                         message: '撤销申请成功',
                         type: 'success',
@@ -337,8 +333,8 @@
 
             getTotal(){
                 let _this = this;
-                console.log(_this.id);
-                this.axios.get("/record/gettotalbyuser/" + _this.id + "/" + _this.auditState, {
+                console.log(_this.userID);
+                this.axios.get("/record/gettotalbyuser/" + _this.userID + "/" + _this.auditState, {
                     headers: {
                         "Authorization": localStorage.getItem("token")
                     }
@@ -350,8 +346,8 @@
             getRecords(auditState, currentPage)
             {
                 let _this = this;
-                this.axios.get("/record/getbyuser/" + _this.id + "/" + _this.auditState + "/" + _this.currentPage, {
-                    headers: {
+                this.axios.get("/record/getbyuser/" + _this.userID + "/" + _this.auditState + "/" + _this.currentPage, {
+              headers: {
                         "Authorization": localStorage.getItem("token")
                     }
                 }).then(res => {
@@ -362,9 +358,10 @@
             },
 
             handleClick() {
-                this.getRecords(this.depName, this.auditState, 1)
-                this.getTotal();
-                this.currentPage = 1;
+              let _this = this;
+                _this.getTotal();
+                _this.getRecords(_this.auditState, 1)
+                _this.currentPage = 1;
             },
 
             tableRowClassName({row, rowIndex}) {
@@ -379,14 +376,16 @@
             },
 
             handleCurrentChange(currentPage) {
-                this.getRecords(this.auditState, currentPage);
+              let _this = this;
+              _this.getTotal();
+              _this.getRecords(_this.auditState, currentPage);
             },
         },
             created() {
                 console.log(Cookies.get("userInfo"));
                 let _this = this;
-                this.id = JSON.parse(Cookies.get("userInfo")).userID;
-                console.log(this.id);
+                this.userID = JSON.parse(Cookies.get("userInfo")).userID;
+                console.log(this.userID);
                 _this.getTotal();
                 _this.getRecords(_this.auditState,1);
 
