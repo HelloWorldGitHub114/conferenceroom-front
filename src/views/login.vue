@@ -21,11 +21,8 @@
             clickMode="push">
         </vue-particles>
 
-
-      <el-row style="margin-top: 200px">
-
 <!--            登录表单-->
-            <el-col :span="7" :offset="5" class="mborder">
+            <el-form class="login-form">
                 <h3 style="text-align: center;position: relative;margin-top: 10px"><i class="iconfont iconhuiyishi"/>会议室管理系统</h3>
 
                 <el-form :model="ruleForm"  status-icon :rules="rules"   ref="ruleForm"  class="demo-ruleForm"
@@ -40,36 +37,36 @@
 
                     <el-form-item>
                         <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
-                        <el-button @click="resetForm('ruleForm')">重置输入</el-button>
+                        <el-button @click="resetForm('ruleForm')">注册</el-button>
+                        <el-button type="text" class="el-icon-question" style="background: transparent;float: right;font-size: large;color: rgb(128,128,128);" @click="getTip()"></el-button>
                     </el-form-item>
                 </el-form>
-            </el-col>
+            </el-form>
 
-<!--            登录提醒-->
-            <el-col :span="6" :offset="1" class="mborder mwarn" >
-                <el-card class="box-card">
-                    <div slot="header" class="clearfix">
-                        <el-alert
-                                title="登录提示"
-                                type="warning"
-                                :closable="false">
-                        </el-alert>
-                    </div>
-                    <el-alert
-                            title="测试用账号：adminn 密码：adminn"
-                            type="info"
-                            show-icon
-                    :closable="false">
-                    </el-alert>
-                    <el-alert
-                            title="如有问题可联系管理员：xxxxxxxxx@qq.com"
-                            type="info"
-                            show-icon
-                            :closable="false">
-                    </el-alert>
-                </el-card>
-            </el-col>
-        </el-row>
+        <el-dialog :visible.sync="dialogTipVisible" width="28%" :modal-append-to-body='false'>
+          <!--            登录提醒-->
+          <div slot="header" class="clearfix">
+            <el-alert
+                title="登录提示"
+                type="warning"
+                :closable="false">
+            </el-alert>
+          </div>
+          <el-alert
+              title="测试用账号：adminn 密码：adminn"
+              type="info"
+              show-icon
+              :closable="false">
+          </el-alert>
+          <el-alert
+              title="如有问题可联系管理员：xxxxxxxxx@qq.com"
+              type="info"
+              show-icon
+              :closable="false">
+          </el-alert>
+        </el-dialog>
+
+
 
     </div>
 </template>
@@ -93,7 +90,8 @@
                         { required: true, message: '请输入密码', trigger: 'blur' },
                         { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }
                     ]
-                }
+                },
+                dialogTipVisible:false
             };
         },
         methods: {
@@ -123,6 +121,9 @@
             },
             resetForm(formName) {
                 this.$refs[formName].resetFields();
+            },
+            getTip(){
+              this.dialogTipVisible = true;
             }
         },
         created() {
@@ -159,16 +160,18 @@
       position:fixed;
     }
 
-    .mborder{
+    .login-form{
         box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.25);
         backdrop-filter: blur(5px); /* Adjust the blur value as needed */
         background: rgba(255, 255, 255, 0.1); /* Adjust the background color and opacity as needed */
         border-radius: 15px; /* Optional: Add border-radius for rounded corners */
         padding: 20px; /* Optional: Add padding for better visibility */
-    }
-
-    .mwarn{
-        margin-top: 10px;
+        height: 30%;
+        width: 26%;
+        position: absolute;
+        top: 45%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
 
     .demo-ruleForm{
@@ -187,6 +190,10 @@
     .box-card {
         //width: 300px;
         background-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .el-input >>> .el-input__inner {
+      background-color: rgba(255, 255, 255, 0.247);
     }
 
 </style>
