@@ -137,27 +137,27 @@
 
 <!--        申请会议室弹出框-->
         <el-dialog title="申请会议室" :visible.sync="dialogFormApply">
-          <el-form :model="record.conferenceRecord" label-position="right" label-width="80px" status-icon :rules="rules" ref="applyForm">
+          <el-form :model="record" label-position="right" label-width="80px" status-icon :rules="rules" ref="applyForm">
             <el-row>
               <el-col :span="12">
                 <!-- First Column -->
                 <el-form-item label="会议主题" prop="theme">
-                  <el-input v-model="record.conferenceRecord.theme" placeholder="请输入会议主题" style="width: 250px"></el-input>
+                  <el-input v-model="record.theme" placeholder="请输入会议主题" style="width: 250px"></el-input>
                 </el-form-item>
 
                 <el-form-item label="预约理由" prop="digest">
-                  <el-input type="textarea" autosize v-model="record.conferenceRecord.digest" placeholder="请输入预约理由" style="width: 250px"></el-input>
+                  <el-input type="textarea" autosize v-model="record.digest" placeholder="请输入预约理由" style="width: 250px"></el-input>
                 </el-form-item>
 
                 <el-form-item label="会议人数" prop="personCount">
-                  <el-input @blur="examinePersonCount" v-model.number="record.conferenceRecord.personCount" placeholder="会议人数" style="width: 250px"></el-input>
+                  <el-input @blur="examinePersonCount" v-model.number="record.personCount" placeholder="会议人数" style="width: 250px"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <!-- Second Column -->
                 <el-form-item label="预约日期" prop="selectDate" style="width: 250px">
                   <el-date-picker
-                      v-model="record.conferenceRecord.selectDate"
+                      v-model="record.selectDate"
                       type="date"
                       placeholder="选择预约日期"
                       :picker-options="pickerOptions"
@@ -169,7 +169,7 @@
 
                 <el-form-item label="开始时间" prop="startTime" style="width: 250px">
                   <el-time-select
-                      v-model="record.conferenceRecord.startTime"
+                      v-model="record.startTime"
                       placeholder="选择开始时间"
                       :picker-options="selectOptions"
                       @blur="searchTimeConflict"
@@ -180,7 +180,7 @@
 
                 <el-form-item label="结束时间" prop="endTime" style="width: 250px">
                   <el-time-select
-                      v-model="record.conferenceRecord.endTime"
+                      v-model="record.endTime"
                       placeholder="选择结束时间"
                       :picker-options="selectOptions"
                       @blur="searchTimeConflict"
@@ -308,19 +308,15 @@
                 }],
 
                 record:{
-                    "apply": {
-                        "roomSize":'', //申请会议室时 会议人数要比较
-                        "depId": '',
-                        "roomID": ''
-                    },
-                    "conferenceRecord": {
-                        "selectDate": null,
-                        "startTime": null,
-                        "endTime": null,
-                        "personCount":'',
-                        "theme": "",
-                        "digest": "",
-                    }
+                  "roomSize":'', //申请会议室时 会议人数要比较
+                  "userID": '',
+                  "roomID": '',
+                  "selectDate": null,
+                  "startTime": null,
+                  "endTime": null,
+                  "personCount":'',
+                  "theme": "",
+                  "digest": "",
                 },
 
                 rules: {
@@ -391,26 +387,26 @@
 
             //检查参与会议人数是否小于等于会议室可容纳人数 并且不能为0
             examinePersonCount(){
-                    if(this.record.conferenceRecord.personCount!==null&&this.record.conferenceRecord.personCount!==0){
-                        if(this.record.conferenceRecord.personCount>this.record.apply.roomSize){
+                    if(this.record.personCount!==null&&this.record.personCount!==0){
+                        if(this.record.personCount>this.record.roomSize){
                             this.$message({
                                 message: '人数超过会议室可容纳人数',
                                 type:'error',
                                 center: true
                             });
 
-                            this.record.conferenceRecord.personCount = '';
+                            this.record.personCount = '';
                         }
 
                     }
 
-                    if(this.record.conferenceRecord.personCount === 0){
+                    if(this.record.personCount === 0){
                         this.$message({
                             message: '参与会议人数不能为0',
                             type:'error',
                             center: true
                         });
-                        this.record.conferenceRecord.personCount = '';
+                        this.record.personCount = '';
                     }
             },
 
@@ -421,12 +417,12 @@
             //开始时间不能早于当前时间
             //会议室的使用时间为10点23点
             searchTimeConflict(){
-                if( this.record.conferenceRecord.selectDate!==null && this.record.conferenceRecord.startTime!==null  && this.record.conferenceRecord.endTime!==null) {
+                if( this.record.selectDate!==null && this.record.startTime!==null  && this.record.endTime!==null) {
                   /*
                     //转为时间戳
-                    let startTime = new Date(this.record.conferenceRecord.startTime);
-                    let endTime = new Date(this.record.conferenceRecord.endTime);
-                    let roomID = this.record.apply.roomID;
+                    let startTime = new Date(this.record.startTime);
+                    let endTime = new Date(this.record.endTime);
+                    let roomID = this.record.roomID;
                     console.log(startTime.getHours(),endTime.getHours())
 
                     //结束时间必须大于开始时间 并且会议最短为10分钟
@@ -436,8 +432,8 @@
                             type: 'error',
                             center: true
                         });
-                        this.record.conferenceRecord.startTime = null;
-                        this.record.conferenceRecord.endTime = null;
+                        this.record.startTime = null;
+                        this.record.endTime = null;
                     } else if(startTime.getTime() < new Date().getTime()+15*60*1000){
                         //会议的开始时间最快也只能是当前时间再+15分钟的间隔
                         this.$message({
@@ -445,8 +441,8 @@
                             type: 'error',
                             center: true
                         });
-                        this.record.conferenceRecord.startTime = null;
-                        this.record.conferenceRecord.endTime = null;
+                        this.record.startTime = null;
+                        this.record.endTime = null;
                     } else if(startTime.getHours()<10 || endTime.getHours()>=23){
                         //会议室的使用时间只能是早上10点到晚上23点
                         //注意是10点以后 23点以前 所以是大于等于23
@@ -455,13 +451,13 @@
                             type: 'error',
                             center: true
                         });
-                        this.record.conferenceRecord.startTime = null;
-                        this.record.conferenceRecord.endTime = null;
+                        this.record.startTime = null;
+                        this.record.endTime = null;
                     } else {
 
                         let _this = this;
-                        _this.axios.get("/apply/searchtimeconflict/" + roomID + "/" + _this.record.conferenceRecord.startTime
-                            + "/" + _this.record.conferenceRecord.endTime, {
+                        _this.axios.get("/apply/searchtimeconflict/" + roomID + "/" + _this.record.startTime
+                            + "/" + _this.record.endTime, {
                             headers: {
                                 "Authorization": localStorage.getItem("token")
                             }
@@ -480,15 +476,15 @@
                                     type: 'error',
                                     center: true
                                 });
-                                _this.record.conferenceRecord.startTime = null;
-                                _this.record.conferenceRecord.endTime = null;
+                                _this.record.startTime = null;
+                                _this.record.endTime = null;
                             }
                         })
                     }
                   * */
-                  let startTime = new Date('${this.record.conferenceRecord.selectDate} ${this.record.conferenceRecord.startTime}');
-                  let endTime = new Date('${this.record.conferenceRecord.selectDate} ${this.record.conferenceRecord.endTime}');
-                  let roomID = this.record.apply.roomID;
+                  let startTime = new Date('${this.record.selectDate} ${this.record.startTime}');
+                  let endTime = new Date('${this.record.selectDate} ${this.record.endTime}');
+                  let roomID = this.record.roomID;
                   console.log(startTime.getHours(),endTime.getHours())
 
                   //结束时间必须大于开始时间 并且会议最短为10分钟
@@ -498,13 +494,13 @@
                       type: 'error',
                       center: true
                     });
-                    this.record.conferenceRecord.startTime = null;
-                    this.record.conferenceRecord.endTime = null;
+                    this.record.startTime = null;
+                    this.record.endTime = null;
                   } else {
 
                     let _this = this;
-                    _this.axios.get("/apply/searchtimeconflict/" + roomID + "/" + _this.record.conferenceRecord.startTime
-                        + "/" + _this.record.conferenceRecord.endTime, {
+                    _this.axios.get("/apply/searchtimeconflict/" + roomID + "/" + _this.record.startTime
+                        + "/" + _this.record.endTime, {
                       headers: {
                         "Authorization": localStorage.getItem("token")
                       }
@@ -523,8 +519,8 @@
                           type: 'error',
                           center: true
                         });
-                        _this.record.conferenceRecord.startTime = null;
-                        _this.record.conferenceRecord.endTime = null;
+                        _this.record.startTime = null;
+                        _this.record.endTime = null;
                       }
                     })
                   }
@@ -534,8 +530,8 @@
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-
                     let _this =this;
+                    _this.record.userID = JSON.parse(Cookies.get("userInfo")).userID;
                         _this.axios.post("/apply/add",_this.record, {
                             headers: {
                                 "Authorization": localStorage.getItem("token")
@@ -547,7 +543,7 @@
                                 center: true
                             });
                             _this.dialogFormApply= false;
-                            _this.record.conferenceRecord= {
+                            _this.record= {
                                 "startTime":null,
                                 "endTime": null,
                                 "personCount":'',
@@ -571,10 +567,17 @@
             change(){
                 //这样才能避免为空的时候也能传递数据  因为后台restFul风格下传递的参数不能不传 如果直接写this.xxx
                 //当属性为空时  传递不了
-                let floor = JSON.stringify(this.roomFloor);
-                let type1  = JSON.stringify(this.roomType);
-                let size = JSON.stringify(this.roomSize);
-                let url = "/conference-room/listbyonstate/"+floor+"/"+type1+"/"+size;
+              const jsonParams = {
+                roomFloor: this.roomFloor,
+                roomSize: this.roomSize,
+              };
+
+                let queryString = Object.keys(jsonParams)
+                  .filter(key => jsonParams[key] !== null && jsonParams[key] !== undefined && jsonParams[key] !== '')
+                  .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(jsonParams[key])}`)
+                  .join('&');
+                queryString = queryString=='' ? '' : '?'+queryString;
+                let url = "/conference-room/listbyonstate"+queryString;
 
                 let _this = this;
                 this.axios.get(url,{
@@ -610,8 +613,8 @@
             },
             handleApply(index, row) {
                 this.dialogFormApply = true;
-                this.record.apply.roomID = row.roomID;
-                this.record.apply.roomSize = row.roomSize;
+                this.record.roomID = row.roomID;
+                this.record.roomSize = row.roomSize;
             },
 
             tableRowClassName({row, rowIndex}) {

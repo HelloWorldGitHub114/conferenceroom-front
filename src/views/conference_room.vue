@@ -493,11 +493,12 @@
                   roomState: this.roomState
                 };
 
-              const queryString = Object.keys(jsonParams)
+              let queryString = Object.keys(jsonParams)
                   .filter(key => jsonParams[key] !== null && jsonParams[key] !== undefined && jsonParams[key] !== '')
                   .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(jsonParams[key])}`)
                   .join('&');
-              let url = "/conference-room/listby?"+queryString;
+              queryString = queryString=='' ? '' : '?'+queryString;
+              let url = "/conference-room/listby"+queryString;
 
                 let _this = this;
                 this.axios.get(url,{
