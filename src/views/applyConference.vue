@@ -45,23 +45,24 @@
                 :picker-options="pickerOptions"
                 default-time="10:00:00"
                 value-format="yyyy-MM-dd"
+                @change="change"
             ></el-date-picker>
 
             <el-time-select
                 class="mselect"
                 v-model="searchStartTime"
                 placeholder="选择开始时间"
-                :picker-options="startPickerOptions"
-                default-time="10:00:00"
+                :picker-options="searchStartPickerOptions"
+                @change="change"
             ></el-time-select>
 
             <el-time-select
                 class="mselect"
                 v-model="searchEndTime"
                 placeholder="选择结束时间"
-                :picker-options="endPickerOptions"
+                :picker-options="searchEndPickerOptions"
                 default-time="11:00:00"
-                value-format="HH:mm:ss"
+                @change="change"
             ></el-time-select>
 
         </div>
@@ -171,10 +172,10 @@
                   <el-time-select
                       v-model="record.startTime"
                       placeholder="选择开始时间"
-                      :picker-options="selectOptions"
+                      :picker-options="applyStartPickerOptions"
                       @blur="searchTimeConflict"
                       default-time="10:00:00"
-                      @change="searchTimeConflict"
+                      value-format="HH:mm:ss"
                   ></el-time-select>
                 </el-form-item>
 
@@ -182,7 +183,7 @@
                   <el-time-select
                       v-model="record.endTime"
                       placeholder="选择结束时间"
-                      :picker-options="selectOptions"
+                      :picker-options="applyEndPickerOptions"
                       @blur="searchTimeConflict"
                       default-time="11:00:00"
                       value-format="HH:mm:ss"
@@ -344,20 +345,63 @@
         },
 
         computed: {
-          startPickerOptions() {
+          searchStartPickerOptions() {
+            let startEndTime = '18:00'; // Default start time if this.startTime is not set
+
+            if (this.searchEndTime) {
+              // If this.endTime is set, calculate one hour before it
+              const startTimeDate = new Date(`2000-01-01 ${this.searchEndTime}`);
+              startTimeDate.setHours(startTimeDate.getHours()-1);
+              startEndTime = startTimeDate.toTimeString().slice(0, 5); // Format to HH:mm
+            }
+
             return {
-              start: '08:00', // Adjust as needed
+              start: '8:00',
+              step: '01:00', // Adjust the step as needed
+              end: startEndTime, // Adjust the end time as needed
+            };
+          },
+
+          searchEndPickerOptions() {
+            let endStartTime = '09:00'; // Default start time if this.startTime is not set
+
+            if (this.searchStartTime) {
+              // If this.startTime is set, calculate one hour after it
+              const startTimeDate = new Date(`2000-01-01 ${this.searchStartTime}`);
+              startTimeDate.setHours(startTimeDate.getHours() + 1);
+              endStartTime = startTimeDate.toTimeString().slice(0, 5); // Format to HH:mm
+            }
+
+            return {
+              start: endStartTime,
               step: '01:00', // Adjust the step as needed
               end: '18:00', // Adjust the end time as needed
             };
           },
 
-          endPickerOptions() {
-            let endStartTime = '08:00'; // Default start time if this.startTime is not set
+          applyStartPickerOptions() {
+            let startEndTime = '18:00'; // Default start time if this.startTime is not set
 
-            if (this.searchStartTime) {
+            if (this.record.endTime) {
+              // If this.endTime is set, calculate one hour before it
+              const startTimeDate = new Date(`2000-01-01 ${this.record.endTime}`);
+              startTimeDate.setHours(startTimeDate.getHours()-1);
+              startEndTime = startTimeDate.toTimeString().slice(0, 5); // Format to HH:mm
+            }
+
+            return {
+              start: '8:00',
+              step: '01:00', // Adjust the step as needed
+              end: startEndTime, // Adjust the end time as needed
+            };
+          },
+
+          applyEndPickerOptions() {
+            let endStartTime = '09:00'; // Default start time if this.startTime is not set
+
+            if (this.record.startTime) {
               // If this.startTime is set, calculate one hour after it
-              const startTimeDate = new Date(`2000-01-01 ${this.searchStartTime}`);
+              const startTimeDate = new Date(`2000-01-01 ${this.record.startTime}`);
               startTimeDate.setHours(startTimeDate.getHours() + 1);
               endStartTime = startTimeDate.toTimeString().slice(0, 5); // Format to HH:mm
             }
@@ -418,120 +462,44 @@
             //会议室的使用时间为10点23点
             searchTimeConflict(){
                 if( this.record.selectDate!==null && this.record.startTime!==null  && this.record.endTime!==null) {
-                  /*
-                    //转为时间戳
-                    let startTime = new Date(this.record.startTime);
-                    let endTime = new Date(this.record.endTime);
-                    let roomID = this.record.roomID;
-                    console.log(startTime.getHours(),endTime.getHours())
-
-                    //结束时间必须大于开始时间 并且会议最短为10分钟
-                    if (startTime.getTime() > endTime.getTime() || startTime.getTime()+(10*60*1000)>endTime.getTime()) {
-                        this.$message({
-                            message: '结束时间必须晚于开始时间，且会议时间最短为10分钟',
-                            type: 'error',
-                            center: true
-                        });
-                        this.record.startTime = null;
-                        this.record.endTime = null;
-                    } else if(startTime.getTime() < new Date().getTime()+15*60*1000){
-                        //会议的开始时间最快也只能是当前时间再+15分钟的间隔
-                        this.$message({
-                            message: '开始时间至少比当前时间晚15分钟',
-                            type: 'error',
-                            center: true
-                        });
-                        this.record.startTime = null;
-                        this.record.endTime = null;
-                    } else if(startTime.getHours()<10 || endTime.getHours()>=23){
-                        //会议室的使用时间只能是早上10点到晚上23点
-                        //注意是10点以后 23点以前 所以是大于等于23
-                        this.$message({
-                            message: '会议室的使用时间为10-23点',
-                            type: 'error',
-                            center: true
-                        });
-                        this.record.startTime = null;
-                        this.record.endTime = null;
-                    } else {
-
-                        let _this = this;
-                        _this.axios.get("/apply/searchtimeconflict/" + roomID + "/" + _this.record.startTime
-                            + "/" + _this.record.endTime, {
-                            headers: {
-                                "Authorization": localStorage.getItem("token")
-                            }
-                        }).then(res => {
-                            if (res.data.data === '1') {
-
-
-                                this.$message({
-                                    message: '时间允可',
-                                    type: 'success',
-                                    center: true
-                                });
-                            } else {
-                                this.$message({
-                                    message: '时间冲突，请选择其他时间或者会议室',
-                                    type: 'error',
-                                    center: true
-                                });
-                                _this.record.startTime = null;
-                                _this.record.endTime = null;
-                            }
-                        })
-                    }
-                  * */
-                  let startTime = new Date('${this.record.selectDate} ${this.record.startTime}');
-                  let endTime = new Date('${this.record.selectDate} ${this.record.endTime}');
                   let roomID = this.record.roomID;
-                  console.log(startTime.getHours(),endTime.getHours())
 
-                  //结束时间必须大于开始时间 并且会议最短为10分钟
-                  if (startTime.getTime() >= endTime.getTime()) {
-                    this.$message({
-                      message: '结束时间必须晚于开始时间，且会议时间最短为10分钟',
-                      type: 'error',
-                      center: true
-                    });
-                    this.record.startTime = null;
-                    this.record.endTime = null;
-                  } else {
+                  let startTime = this.record.selectDate + ' ' + this.record.startTime + ':00';
+                  let endTime = this.record.selectDate + ' ' + this.record.endTime + ':00';
+                  let _this = this;
+                  _this.axios.get("/apply/searchtimeconflict/" + roomID + "/" + startTime
+                      + "/" + endTime, {
+                    headers: {
+                      "Authorization": localStorage.getItem("token")
+                    }
+                  }).then(res => {
+                    if (res.data.data === '1') {
 
-                    let _this = this;
-                    _this.axios.get("/apply/searchtimeconflict/" + roomID + "/" + _this.record.startTime
-                        + "/" + _this.record.endTime, {
-                      headers: {
-                        "Authorization": localStorage.getItem("token")
-                      }
-                    }).then(res => {
-                      if (res.data.data === '1') {
-
-
-                        this.$message({
-                          message: '时间允可',
-                          type: 'success',
-                          center: true
-                        });
-                      } else {
-                        this.$message({
-                          message: '时间冲突，请选择其他时间或者会议室',
-                          type: 'error',
-                          center: true
-                        });
-                        _this.record.startTime = null;
-                        _this.record.endTime = null;
-                      }
-                    })
-                  }
+                      this.$message({
+                        message: '时间允可',
+                        type: 'success',
+                        center: true
+                      });
+                    } else {
+                      this.$message({
+                        message: '时间冲突，请选择其他时间或者会议室',
+                        type: 'error',
+                        center: true
+                      });
+                      _this.record.startTime = null;
+                      _this.record.endTime = null;
+                    }
+                  })
                 }
             },
 
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
+                      this.record.userID = JSON.parse(Cookies.get("userInfo")).userID;
+                      this.record.startTime = this.record.selectDate + ' ' + this.record.startTime + ':00';
+                      this.record.endTime = this.record.selectDate + ' ' + this.record.endTime + ':00';
                     let _this =this;
-                    _this.record.userID = JSON.parse(Cookies.get("userInfo")).userID;
                         _this.axios.post("/apply/add",_this.record, {
                             headers: {
                                 "Authorization": localStorage.getItem("token")
@@ -544,6 +512,7 @@
                             });
                             _this.dialogFormApply= false;
                             _this.record= {
+                                "selectDate": null,
                                 "startTime":null,
                                 "endTime": null,
                                 "personCount":'',
@@ -565,11 +534,17 @@
             },
 
             change(){
-                //这样才能避免为空的时候也能传递数据  因为后台restFul风格下传递的参数不能不传 如果直接写this.xxx
-                //当属性为空时  传递不了
+              let searchStartTime = null;
+              let searchEndTime = null;
+              if(this.searchDate != null && this.searchStartTime != null && this.searchEndTime != null){
+                  searchStartTime = this.searchDate + ' ' + this.searchStartTime + ':00';
+                  searchEndTime = this.searchDate + ' ' + this.searchEndTime + ':00';
+              }
               const jsonParams = {
                 roomFloor: this.roomFloor,
                 roomSize: this.roomSize,
+                searchStartTime : searchStartTime,
+                searchEndTime : searchEndTime
               };
 
                 let queryString = Object.keys(jsonParams)
@@ -597,7 +572,6 @@
                     }
                 }).then(res=>{
                     _this.floors = res.data.data.floors;
-                    _this.types = res.data.data.types;
                     _this.sizes = res.data.data.sizes;
                 })
             },
