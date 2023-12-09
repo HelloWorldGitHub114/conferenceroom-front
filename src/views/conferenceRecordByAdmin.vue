@@ -22,6 +22,7 @@
                 data.roomNo.toLowerCase().includes(search.toLowerCase()) ||  data.roomFloor.toLowerCase().includes(search.toLowerCase())
                 || data.depName.toLowerCase().includes(search.toLowerCase()))"
                         style="width: 100%"
+                        :height="maxHeight"
                         :row-class-name="tableRowClassName">
                     <el-table-column type="expand">
                         <template slot-scope="props">
@@ -117,6 +118,7 @@
                 <el-table :data="formData.filter(data => !search || data.theme.toLowerCase().includes(search.toLowerCase())||
                 data.roomNo.toLowerCase().includes(search.toLowerCase()) ||  data.UserID.toLowerCase().includes(search.toLowerCase()))"
                         style="width: 100%"
+                        :height="maxHeight"
                         :row-class-name="tableRowClassName">
                     <el-table-column type="expand">
                         <template slot-scope="props">
@@ -208,6 +210,7 @@
                 <el-table :data="formData.filter(data => !search || data.theme.toLowerCase().includes(search.toLowerCase())||
                 data.roomNo.toLowerCase().includes(search.toLowerCase()) ||  data.UserID.toLowerCase().includes(search.toLowerCase()))"
                         style="width: 100%"
+                        :height="maxHeight"
                         :row-class-name="tableRowClassName">
                     <el-table-column type="expand">
                         <template slot-scope="props">
@@ -308,7 +311,8 @@
                 search: '',
                 currentPage: 1,
                 total: 1,
-                pageSize: 7,
+                pageSize: 6,
+                maxHeight: '390px',
 
                 formData: [
                     {

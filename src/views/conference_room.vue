@@ -69,7 +69,8 @@
 
             <el-table :data="conferenceRooms.filter(data => !this.search || data.roomNo.toLowerCase().includes(this.search.toLowerCase())||
                 data.roomFloor.toLowerCase().includes(this.search.toLowerCase()) || data.roomName.toLowerCase().includes(this.search.toLowerCase()))"
-                    style="width: 100%;text-align: center;margin-top: 10px"
+                      style="width: 100%;text-align: center;margin-top: 10px"
+                      max-height="470px"
                     :row-class-name="this.tableRowClassName">
                 <el-table-column
                         prop="roomNo"
@@ -181,7 +182,7 @@
                 <el-row>
                   <el-col :span="12">
                     <el-form-item label="会议室图片" style="font-weight: bold">
-                        <img :src=selectedRow.roomPhoto alt="会议室图片" style="margin-top: 10px;max-width: 400px;max-height: 200px;" loading="lazy">
+                        <img :src=selectedRow.roomPhoto alt="这是图片" style="margin-top: 10px;max-width: 400px;max-height: 200px;" loading="lazy">
                     </el-form-item>
                   </el-col>
                   <el-col :span="12">

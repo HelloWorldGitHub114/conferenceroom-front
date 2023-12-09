@@ -9,6 +9,7 @@
                         :data="formData.filter(data => !search || data.theme.toLowerCase().includes(search.toLowerCase())||
                 data.roomNo.toLowerCase().includes(search.toLowerCase()) ||  data.roomFloor.toLowerCase().includes(search.toLowerCase()))"
                         style="width: 100%"
+                        :height="maxHeight"
                         :row-class-name="tableRowClassName">
                     <el-table-column type="expand">
                         <template slot-scope="props">
@@ -96,6 +97,7 @@
                         :data="formData.filter(data => !search || data.theme.toLowerCase().includes(search.toLowerCase())||
                 data.roomNo.toLowerCase().includes(search.toLowerCase()) ||  data.roomFloor.toLowerCase().includes(search.toLowerCase()))"
                         style="width: 100%"
+                        :height="maxHeight"
                         :row-class-name="tableRowClassName">
                     <el-table-column type="expand">
                         <template slot-scope="props">
@@ -134,7 +136,8 @@
                   </el-table-column>
                   <el-table-column
                       label="会议室名称"
-                      prop="roomName">
+                      prop="roomName"
+                      align="center">
                   </el-table-column>
                     <el-table-column align="right" >
                         <template slot="header" slot-scope="scope">
@@ -174,6 +177,7 @@
                         :data="formData.filter(data => !search || data.theme.toLowerCase().includes(search.toLowerCase())||
                 data.roomNo.toLowerCase().includes(search.toLowerCase()) ||  data.roomFloor.toLowerCase().includes(search.toLowerCase()))"
                         style="width: 100%"
+                        :height="maxHeight"
                         :row-class-name="tableRowClassName">
                     <el-table-column type="expand">
                         <template slot-scope="props">
@@ -271,6 +275,7 @@
             return{
                 isEmployee:false,
                 auditState: '1',
+                maxHeight:'450px',
                 formData:[
                     {
                     "applyId": 1,

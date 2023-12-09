@@ -1,8 +1,8 @@
 <template>
   <div>
-    <el-container>
+    <el-container class="home-container">
       <!-- width的宽度跟collapse一样动态控制 -->
-      <el-aside width="collapse">
+      <el-aside class="aside" width="collapse">
         <el-menu :default-active="activeIndex"
                  :collapse="isCollapse"
                  class="el-menu-vertical"
@@ -191,6 +191,10 @@
 
 </style>
 <style scoped>
+    .home-container{
+      height: 100%;
+    }
+
     .main {
         height: 100vh;
         min-width: 800px;

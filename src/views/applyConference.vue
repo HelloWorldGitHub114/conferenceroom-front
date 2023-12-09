@@ -43,7 +43,6 @@
                 type="date"
                 placeholder="选择预约日期"
                 :picker-options="pickerOptions"
-                default-time="10:00:00"
                 value-format="yyyy-MM-dd"
                 @change="change"
             ></el-date-picker>
@@ -61,7 +60,6 @@
                 v-model="searchEndTime"
                 placeholder="选择结束时间"
                 :picker-options="searchEndPickerOptions"
-                default-time="11:00:00"
                 @change="change"
             ></el-time-select>
 
@@ -69,18 +67,19 @@
         <el-table :data="conferenceRooms.filter(data => !this.search || data.roomNo.toLowerCase().includes(this.search.toLowerCase())||
                 data.roomFloor.toLowerCase().includes(this.search.toLowerCase()) || data.roomName.toLowerCase().includes(this.search.toLowerCase()))"
                   style="width: 100%;text-align: center"
+                  max-height="440px"
                   :row-class-name="this.tableRowClassName">
             <el-table-column
                 prop="roomNo"
                 label="房号"
-                width="120"
+                width="150"
                 align="center"
                 sortable>
             </el-table-column>
             <el-table-column
                 prop="roomFloor"
                 label="楼层"
-                width="120"
+                width="150"
                 align="center"
                 sortable>
             </el-table-column>
@@ -93,14 +92,14 @@
             <el-table-column
                 prop="roomArea"
                 label="面积"
-                width="120"
+                width="150"
                 align="center"
                 sortable>
             </el-table-column>
             <el-table-column
                 prop="roomSize"
                 label="可容纳人数"
-                width="120"
+                width="150"
                 align="center"
                 sortable>
             </el-table-column>
@@ -163,7 +162,6 @@
                       placeholder="选择预约日期"
                       :picker-options="pickerOptions"
                       @blur="searchTimeConflict"
-                      default-time="10:00:00"
                       value-format="yyyy-MM-dd"
                   ></el-date-picker>
                 </el-form-item>
@@ -174,8 +172,6 @@
                       placeholder="选择开始时间"
                       :picker-options="applyStartPickerOptions"
                       @blur="searchTimeConflict"
-                      default-time="10:00:00"
-                      value-format="HH:mm:ss"
                   ></el-time-select>
                 </el-form-item>
 
@@ -185,8 +181,6 @@
                       placeholder="选择结束时间"
                       :picker-options="applyEndPickerOptions"
                       @blur="searchTimeConflict"
-                      default-time="11:00:00"
-                      value-format="HH:mm:ss"
                   ></el-time-select>
                 </el-form-item>
                 <!-- Add more form items for the second column as needed -->
@@ -207,7 +201,7 @@
           <el-row>
             <el-col :span="12">
               <el-form-item label="会议室图片" style="font-weight: bold">
-                <img :src=selectedRow.roomPhoto alt="会议室图片" style="margin-top: 10px;max-width: 400px;max-height: 200px;" loading="lazy">
+                <img :src=selectedRow.roomPhoto alt="这是图片" style="margin-top: 10px;max-width: 400px;max-height: 200px;" loading="lazy">
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -356,7 +350,7 @@
             }
 
             return {
-              start: '8:00',
+              start: '08:00',
               step: '01:00', // Adjust the step as needed
               end: startEndTime, // Adjust the end time as needed
             };
@@ -390,7 +384,7 @@
             }
 
             return {
-              start: '8:00',
+              start: '08:00',
               step: '01:00', // Adjust the step as needed
               end: startEndTime, // Adjust the end time as needed
             };
@@ -465,7 +459,7 @@
                   let roomID = this.record.roomID;
 
                   let startTime = this.record.selectDate + ' ' + this.record.startTime + ':00';
-                  let endTime = this.record.selectDate + ' ' + this.record.endTime + ':00';
+                  let endTime = this.record.selectDate + ' ' + this.record.endTime + ':00'
                   let _this = this;
                   _this.axios.get("/apply/searchtimeconflict/" + roomID + "/" + startTime
                       + "/" + endTime, {
@@ -473,14 +467,7 @@
                       "Authorization": localStorage.getItem("token")
                     }
                   }).then(res => {
-                    if (res.data.data === '1') {
-
-                      this.$message({
-                        message: '时间允可',
-                        type: 'success',
-                        center: true
-                      });
-                    } else {
+                    if (res.data.data !== '1') {
                       this.$message({
                         message: '时间冲突，请选择其他时间或者会议室',
                         type: 'error',
@@ -497,8 +484,6 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                       this.record.userID = JSON.parse(Cookies.get("userInfo")).userID;
-                      this.record.startTime = this.record.selectDate + ' ' + this.record.startTime + ':00';
-                      this.record.endTime = this.record.selectDate + ' ' + this.record.endTime + ':00';
                     let _this =this;
                         _this.axios.post("/apply/add",_this.record, {
                             headers: {
