@@ -37,21 +37,37 @@
 
                     <el-form-item>
                         <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
-                        <el-button @click="resetForm('ruleForm')">注册</el-button>
+                        <el-button @click="registerForm('ruleForm')">注册</el-button>
                         <el-button type="text" class="el-icon-question" style="background: transparent;float: right;font-size: large;color: rgb(128,128,128);" @click="getTip()"></el-button>
                     </el-form-item>
                 </el-form>
             </el-form>
 
+      <el-dialog :visible.sync="dialogRegisterVisible" title="注册" width="38%" :modal-append-to-body='false'>
+        <!--            登录提醒-->
+        <el-form label-position="left" label-width="80px" :model="registerInput"  :rules="rules" ref="registerInput" @keyup.enter.native="registerSubmitForm('registerInput')">
+          <el-form-item label="用户名" prop="username">
+            <el-input :placeholder="registerInput.username" v-model="registerInput.username"></el-input>
+          </el-form-item>
+          <el-form-item label="密码" prop="password">
+            <el-input :placeholder="registerInput.password" v-model="registerInput.password"></el-input>
+          </el-form-item>
+          <el-form-item  label="确认密码" prop="repassword">
+            <el-input :placeholder="registerInput.repassword" v-model="registerInput.repassword"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" style="width: 80px;position: absolute;left:30%" @click="registerSubmitForm('registerInput')">注册</el-button>
+          </el-form-item>
+        </el-form>
+      </el-dialog>
+
         <el-dialog :visible.sync="dialogTipVisible" width="28%" :modal-append-to-body='false'>
           <!--            登录提醒-->
-          <div slot="header" class="clearfix">
-            <el-alert
-                title="登录提示"
-                type="warning"
-                :closable="false">
-            </el-alert>
-          </div>
+          <el-alert
+              title="登录提示"
+              type="warning"
+              :closable="false">
+          </el-alert>
           <el-alert
               title="测试用账号：adminn 密码：adminn"
               type="info"
@@ -76,10 +92,24 @@
     export default {
         name: "login",
         data() {
-            return {
+          let validatePass2 = (rule, value, callback) => {
+            if (value === '') {
+              callback(new Error('请再次输入密码'))
+            } else if (value !== this.registerInput.password) {
+              callback(new Error('两次输入密码不一致!'))
+            } else {
+              callback()
+            }
+          };
+          return {
                 ruleForm: {
                     username: '',
                     password:'',
+                },
+                registerInput: {
+                    username: '',
+                    password:'',
+                    repassword:'',
                 },
                 rules: {
                     username: [
@@ -89,9 +119,13 @@
                     password: [
                         { required: true, message: '请输入密码', trigger: 'blur' },
                         { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }
+                    ],
+                    repassword: [
+                      { required: true, validator: validatePass2, trigger: 'blur' }
                     ]
                 },
-                dialogTipVisible:false
+                dialogTipVisible:false,
+                dialogRegisterVisible:false
             };
         },
         methods: {
@@ -119,8 +153,34 @@
                     }
                 });
             },
-            resetForm(formName) {
+            registerForm(formName) {
                 this.$refs[formName].resetFields();
+                this.dialogRegisterVisible = true;
+            },
+            registerSubmitForm(formName) {
+              this.$refs[formName].validate((valid) => {
+                if (valid) {
+                  this.ruleForm.username = this.registerInput.username;
+                  this.ruleForm.password = this.registerInput.password;
+                  let _this = this;
+                  this.axios.post("/register",_this.ruleForm).then((res)=> {
+                    const jwt = res.headers['authorization'];
+                    const userInfo = res.data.data;
+                    _this.$store.commit('SET_TOKEN',jwt);
+                    _this.$store.commit('SET_USERINFO',userInfo);
+
+                    _this.$message({
+                      message: '注册成功!',
+                      type: 'success'
+                    });
+
+                    _this.$router.push("/index");
+                  });
+                } else {
+                  console.log('提交信息有误');
+                  return false;
+                }
+              });
             },
             getTip(){
               this.dialogTipVisible = true;
@@ -149,6 +209,7 @@
         background-image: url('../assets/images/background.png');
         background-position: center center;
         background-size: cover;
+        overflow:hidden;
     }
 
     .login-bg{
@@ -158,6 +219,7 @@
       background: no-repeat;
       opacity:0.9;
       position:fixed;
+      overflow:hidden;
     }
 
     .login-form{
@@ -176,6 +238,12 @@
 
     .demo-ruleForm{
         margin: 10px 30px;
+    }
+
+    .el-dialog__wrapper {
+      backdrop-filter: blur(5px);
+      border-radius: 15px;
+      padding: 20px;
     }
 
     .clearfix:before,
