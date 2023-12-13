@@ -206,7 +206,7 @@
                       <el-table-column
                           label="数量" align="center">
                         <template slot-scope="scope">
-                          <el-input-number v-model="scope.row.dnumber" @change="handleChange(scope.row.did,scope.row.dnumber)" :min="0"  label="设备数量"></el-input-number>
+                          <el-input-number v-model="scope.row.dnumber" @change="handleChange(scope.row.did,scope.row.dnumber)" :min="1"  label="设备数量"></el-input-number>
                         </template>
                       </el-table-column>
 
@@ -250,7 +250,7 @@
                     <el-input v-model="deviceForm.dname" autocomplete="off" placeholder="请输入设备名称" style="width: 300px"></el-input>
                 </el-form-item>
                 <el-form-item label="设备数量"  label-width="150px">
-                    <el-input-number v-model="deviceForm.dnumber"  :min="0"  label="设备名称"></el-input-number>
+                    <el-input-number v-model="deviceForm.dnumber"  :min="1"  label="设备数量"></el-input-number>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -282,7 +282,7 @@
                 deviceForm:{
                     "roomID":'',
                     "dname":'',
-                    "dnumber":'',
+                    "dnumber":undefined,
                 },
 
                 dialogFormVisible:false,
@@ -304,7 +304,6 @@
                 roomSize:'',
                 roomState:'',
 
-                //抽屉表单中更新还是添加部门的判断依据
                 update:false,
                 search:'',
                 conferenceRooms: [{

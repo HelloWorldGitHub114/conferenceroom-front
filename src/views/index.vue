@@ -94,11 +94,6 @@
             dropdown(data){
                 if(data==='退出')
                     this.logout()
-                else if(data ==='信息'){
-                    this.$router.push("/departmentInfo")
-                }else{
-                    this.$router.push("/employeeInfo")
-                }
             },
 
             //退出
