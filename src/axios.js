@@ -10,8 +10,14 @@ axios.defaults.baseURL="http://localhost:8080"
 
 //前置拦截np,
 axios.interceptors.request.use(config=>{
-    return config;
-})
+
+        // token && (config.headers.Authorization = token)
+        return config;
+    },
+    error => {
+        return Promise.error(error)
+    }
+)
 
 //后置拦截  发生在axios异步请求的.then(res=>{}）前
 axios.interceptors.response.use(response=>{

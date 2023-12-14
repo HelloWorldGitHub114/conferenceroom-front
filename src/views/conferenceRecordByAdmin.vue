@@ -4,19 +4,6 @@
             <el-tab-pane key="admin0" name="0">
                 <span slot="label"><i class="iconfont icontongguo"></i> 未审核</span>
 
-
-                <div class="mConditions" style="margin-left: 20px;margin-bottom: 10px">
-                  <el-date-picker
-                      class="mselect"
-                      v-model="searchDate"
-                      type="date"
-                      placeholder="选择预约日期"
-                      :picker-options="pickerOptions"
-                      default-time="10:00:00"
-                      value-format="yyyy-MM-dd"
-                  ></el-date-picker>
-                </div>
-
                 <el-table
                         :data="formData.filter(data => !search || data.theme.toLowerCase().includes(search.toLowerCase())||
                 data.roomNo.toLowerCase().includes(search.toLowerCase()) ||  data.roomFloor.toLowerCase().includes(search.toLowerCase())
@@ -312,7 +299,7 @@
                 currentPage: 1,
                 total: 1,
                 pageSize: 6,
-                maxHeight: '390px',
+                maxHeight: '450px',
 
                 formData: [
                     {
@@ -334,8 +321,6 @@
                     },
 
                 ],
-
-              searchDate:'',
               pickerOptions: {
                 disabledDate(time) {
                   return time.getTime() < Date.now() - 8.64e7;

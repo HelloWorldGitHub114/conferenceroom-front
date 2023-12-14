@@ -30,6 +30,22 @@
                         <el-form-item label="面积" prop="roomArea">
                           <el-input v-model.number="ruleForm.roomArea"></el-input>
                         </el-form-item>
+                        <el-form-item label="描述" prop="roomDescription">
+                          <el-input v-model="ruleForm.roomDescription" type="textarea"></el-input>
+                        </el-form-item>
+                        <el-form-item label="图片" style="height: 148px">
+                          <el-upload :file-list="uploadImages"
+                                     action=""
+                                     :show-file-list="true"
+                                     :on-change="handleUploadChange"
+                                     :on-remove="handleUploadRemove"
+                                     :auto-upload="false"
+                                     list-type="picture-card"
+                                     :class="{disabled:uploadDisabled}">
+                            <i class="el-icon-plus"></i>
+                          </el-upload>
+                        </el-form-item>
+
                         <el-form-item>
                             <el-button v-if="update" style="background-color: oldlace"  round @click="updateForm('ruleForm')">更 新</el-button>
                             <el-button v-if="!update" style="background-color: oldlace" round @click="submitForm('ruleForm')">立即添加</el-button>
@@ -329,8 +345,11 @@
                     roomSize: '',
                     roomArea: '',
                     roomState: '',
+                    roomPhoto:'',
                     roomDescription: ''
                 },
+                uploadImages:[],
+                uploadDisabled:false,
 
 
 
@@ -346,7 +365,7 @@
                     ],
                     roomName: [
                         { required: true, message: '请输入会议室名称', trigger: 'blur'},
-                        { min: 3, max: 15, message: '长度在 3 到 15 个字符', trigger: 'blur'}
+                        { min: 3, max: 25, message: '长度在 3 到 25 个字符', trigger: 'blur'}
                     ],
                     roomSize: [
                         { required: true, message: '请输入可容纳人数', trigger: 'blur' },
@@ -355,6 +374,8 @@
                     roomArea: [
                         { required: true, message: '请输入面积', trigger: 'blur'},
                         { type: 'number', message: '必须为数字', trigger: 'blur' }
+                    ],
+                    roomDescription: [
                     ],
                 },
 
@@ -406,7 +427,41 @@
                         _this.devices = res.data.data;
                     })
                 })
-            } ,
+            },
+
+            handleUploadRemove(file, fileList) {
+              if (fileList.length === 0) {
+                this.uploadDisabled = false;
+              }
+              this.uploadImages = fileList;
+            },
+
+            handleUploadChange(file, fileList) {
+              //先判断上传的图片格式是否正确
+              if(!this.beforeAvatarUpload(file)){
+                //不正确直接删除
+                fileList.splice(0,1);
+              }else if (fileList.length > 0) {
+                this.uploadDisabled = true;
+                this.uploadImages = fileList;
+              }
+            },
+
+          beforeAvatarUpload(file) {
+              // 设置限定格式
+            const img_mimetype = ['image/jpeg','image/jpg','image/png'];
+            const isImg =  img_mimetype.includes(file.raw.type);
+            const isFitSize = file.size / 1024 / 1024 < 10;
+            if (!isImg) {
+              this.$message.error('上传图片只能是图片格式!');
+              return false;
+            }
+            if (!isFitSize) {
+              this.$message.error('上传图片大小不能超过 10MB!');
+              return false;
+            }
+            return isImg && isFitSize;
+            },
 
           addDevice() {
             this.$refs['deviceFormRules'].validate((valid) => {
@@ -526,6 +581,8 @@
             closeDrawer(){
 
                 this.update=false;
+                this.uploadImages=[];
+                this.uploadDisabled=false;
                 //关闭抽屉时  把数据清空
                 this.ruleForm = {
                     roomID:'',
@@ -540,11 +597,18 @@
             updateForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
+                        const params = new FormData()
+                        // 将上传文件数组依次添加到参数paramsData中
+                        this.uploadImages.forEach((x) => {
+                          params.append('photo', x.raw);
+                        });
+                        // 将输入表单数据添加到params表单中，这里使用json格式化传递，后端再把json转成对象
+                        params.append('jsonData', JSON.stringify(this.ruleForm));
                         let _this = this;
-                        _this.axios.post("/conference-room/add",_this.ruleForm,{
-
+                        _this.axios.post("/conference-room/add",params,{
                             headers:{
-                                "Authorization":localStorage.getItem("token")
+                                "Authorization":localStorage.getItem("token"),
+                                'Content-Type' : 'multipart/form-data'
                             }
                         }).then(res=>{
                             _this.$message.success("修改成功");
@@ -558,6 +622,8 @@
                                 roomState: '',
                                 roomSize: '',
                             };
+                            this.uploadDisabled=false;
+                            this.uploadImages=[];
                             _this.getConditions();
                             _this.getAllConferenceRoom();
 
@@ -572,10 +638,18 @@
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
+                      const params = new FormData()
+                      // 将上传文件数组依次添加到参数paramsData中
+                      this.uploadImages.forEach((x) => {
+                        params.append('photo', x.raw);
+                      });
+                      // 将输入表单数据添加到params表单中，这里使用json格式化传递，后端再把json转成对象
+                      params.append('jsonData', JSON.stringify(this.ruleForm));
                         let _this = this;
-                        _this.axios.post("/conference-room/add",_this.ruleForm,{
+                        _this.axios.post("/conference-room/add",params,{
                             headers:{
-                                "Authorization":localStorage.getItem("token")
+                                "Authorization":localStorage.getItem("token"),
+                                'Content-Type' : 'multipart/form-data'
                             }
                         }).then(res=>{
                             _this.$message.success("添加成功");
@@ -587,7 +661,10 @@
                                 roomName:'',
                                 roomState: '',
                                 roomSize: '',
+                                roomDescription: '',
                             };
+                            this.uploadDisabled=false;
+                            this.uploadImages=[];
                             _this.getConditions();
                             _this.getAllConferenceRoom();
 
@@ -602,11 +679,15 @@
                 this.ruleForm={
                     roomID:'',
                     roomNo: '',
-                    roomFloor: '',
                     roomName:'',
-                    roomState: '',
+                    roomFloor: '',
                     roomSize: '',
-                }
+                    roomArea: '',
+                    roomState: '',
+                    roomDescription: ''
+                };
+                this.uploadDisabled=false;
+                this.uploadImages = [];
             },
 
             getAllConferenceRoom(){
@@ -617,7 +698,6 @@
                     }
                 }).then(res=>{
                     _this.conferenceRooms = res.data.data;
-                    //console.log(this.deps)
                 })
             },
 
@@ -633,6 +713,12 @@
                 //避免引用传递 当修改时 表单验证没通过 但是改了别的东西 列表显示也会跟着改  不希望出现这样的
                 let JsonData = JSON.stringify(row);
                 let rowData = JSON.parse(JsonData);
+
+                //判断图片不为空，回显
+                if(row.roomPhoto !== null || row.roomPhoto !== ""){
+                  this.uploadDisabled = true;
+                  this.uploadImages = [{name: row.roomPhoto,  url: row.roomPhoto}];
+                }
 
                 //将这个设置为true则打开抽屉
                 this.ruleForm=rowData;
@@ -677,7 +763,23 @@
      margin-top: 15px;
  }
 
-    .mselect{
-        margin-left: 15px;
-    }
+ .mselect{
+      margin-left: 15px;
+ }
+
+ /*去除upload组件过渡效果*/
+ .el-upload-list__item {
+   transition: none !important;
+ }
+
+ /* 图片在方框内显示长边 */
+ .el-upload-list__item-thumbnail {
+   object-fit: scale-down !important;
+ }
+
+ /* 有图片不显示上传按钮 */
+ .disabled .el-upload--picture-card {
+   display: none!important;
+ }
+
 </style>
