@@ -14,7 +14,7 @@
 
         <!--            按照条件搜索-->
         <div class="mConditions">
-            <el-select  v-model="roomFloor" clearable placeholder="楼层" @change="change">
+            <el-select  v-model="roomFloor" clearable placeholder="楼层" @change="changeSearch">
                 <el-option
                         v-for="item in floors"
                         :key="item.roomFloor"
@@ -28,7 +28,7 @@
                     v-model="roomSize"
                     clearable
                     placeholder="可容纳人数"
-                    @change="change">
+                    @change="changeSearch">
                 <el-option
                         v-for="item in sizes"
                         :key="item.roomSize"
@@ -44,7 +44,7 @@
                 placeholder="选择预约日期"
                 :picker-options="pickerOptions"
                 value-format="yyyy-MM-dd"
-                @change="change"
+                @change="changeSearchTime"
             ></el-date-picker>
 
             <el-time-select
@@ -52,7 +52,7 @@
                 v-model="searchStartTime"
                 placeholder="选择开始时间"
                 :picker-options="searchStartPickerOptions"
-                @change="change"
+                @change="changeSearchTime"
             ></el-time-select>
 
             <el-time-select
@@ -60,7 +60,7 @@
                 v-model="searchEndTime"
                 placeholder="选择结束时间"
                 :picker-options="searchEndPickerOptions"
-                @change="change"
+                @change="changeSearchTime"
             ></el-time-select>
 
         </div>
@@ -275,9 +275,9 @@
                 //与下拉选框双向绑定
                 roomFloor:'',
                 roomSize:'',
-                searchDate:'',
-                searchStartTime:'',
-                searchEndTime:'',
+                searchDate:null,
+                searchStartTime:null,
+                searchEndTime:null,
 
                 selectOptions: {
                   start: '08:00',step: '01:00',end: '18:00'
@@ -518,12 +518,23 @@
                 this.$refs[formName].resetFields();
             },
 
-            change(){
+            changeSearch(){
+                this.sendSearch(0);
+            },
+
+            changeSearchTime(){
+              if(this.searchDate !== null && this.searchStartTime !== null && this.searchEndTime !== null){
+                  this.sendSearch(1);
+              }
+            },
+
+            sendSearch(flag){
               let searchStartTime = null;
               let searchEndTime = null;
-              if(this.searchDate != null && this.searchStartTime != null && this.searchEndTime != null){
-                  searchStartTime = this.searchDate + ' ' + this.searchStartTime + ':00';
-                  searchEndTime = this.searchDate + ' ' + this.searchEndTime + ':00';
+              //用flag避免重复判断时间是否存在；changeSearchTime()已经判断过一次了，就直接通过条件
+              if(flag || this.searchDate !== null && this.searchStartTime !== null && this.searchEndTime !== null){
+                searchStartTime = this.searchDate + ' ' + this.searchStartTime + ':00';
+                searchEndTime = this.searchDate + ' ' + this.searchEndTime + ':00';
               }
               const jsonParams = {
                 roomFloor: this.roomFloor,
@@ -532,21 +543,21 @@
                 searchEndTime : searchEndTime
               };
 
-                let queryString = Object.keys(jsonParams)
+              let queryString = Object.keys(jsonParams)
                   .filter(key => jsonParams[key] !== null && jsonParams[key] !== undefined && jsonParams[key] !== '')
                   .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(jsonParams[key])}`)
                   .join('&');
-                queryString = queryString=='' ? '' : '?'+queryString;
-                let url = "/conference-room/listbyonstate"+queryString;
+              queryString = queryString=='' ? '' : '?'+queryString;
+              let url = "/conference-room/listbyonstate"+queryString;
 
-                let _this = this;
-                this.axios.get(url,{
-                    headers:{
-                        "Authorization":localStorage.getItem("token")
-                    }
-                }).then(res=>{
-                    _this.conferenceRooms = res.data.data;
-                })
+              let _this = this;
+              this.axios.get(url,{
+                headers:{
+                  "Authorization":localStorage.getItem("token")
+                }
+              }).then(res=>{
+                _this.conferenceRooms = res.data.data;
+              })
             },
 
             getConditions(){

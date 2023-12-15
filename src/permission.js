@@ -17,7 +17,7 @@ router.beforeEach((to, from, next) => {
                 //访问别的路径
                 if(to.meta.role){
                     //有角色限制
-                    if(JSON.parse(Cookies.get("userInfo")).role === "admin" ||JSON.parse(Cookies.get("userInfo")).role === to.meta.role[0]){
+                    if(JSON.parse(Cookies.get("userInfo")).role === "admin" || JSON.parse(Cookies.get("userInfo")).role === to.meta.role[0]){
                         next();
                     }else{
                        Element.Message.error("没有权限 禁止访问");

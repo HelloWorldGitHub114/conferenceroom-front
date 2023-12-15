@@ -240,12 +240,6 @@
         margin: 10px 30px;
     }
 
-    .el-dialog__wrapper {
-      backdrop-filter: blur(5px);
-      border-radius: 15px;
-      padding: 20px;
-    }
-
     .clearfix:before,
     .clearfix:after {
         display: table;

@@ -9,6 +9,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 import "./axios"
 import './assets/icon/iconfont.css'
 import "./permission"
+import "./assets/blur_el-dialog__wrapper.css"
 
 import VueParticles from 'vue-particles'
 Vue.use(VueParticles)
