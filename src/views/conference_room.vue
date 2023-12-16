@@ -84,7 +84,7 @@
 
 
             <el-table :data="conferenceRooms.filter(data => !this.search || data.roomNo.toLowerCase().includes(this.search.toLowerCase())||
-                data.roomFloor.toLowerCase().includes(this.search.toLowerCase()) || data.roomName.toLowerCase().includes(this.search.toLowerCase()))"
+                (''+data.roomFloor).toLowerCase().includes(this.search.toLowerCase()) || data.roomName.toLowerCase().includes(this.search.toLowerCase()))"
                       style="width: 100%;text-align: center;margin-top: 10px"
                       max-height="470px"
                     :row-class-name="this.tableRowClassName">
