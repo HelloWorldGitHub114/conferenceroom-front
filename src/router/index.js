@@ -8,7 +8,6 @@ import applyConference from "../views/applyConference";
 import conferenceRecordByUser from "../views/conferenceRecordByUser";
 import conferenceRecordByAdmin from "../views/conferenceRecordByAdmin";
 import home from '../views/home';
-import device from '../views/device'
 
 
 Vue.use(VueRouter);
@@ -81,17 +80,6 @@ Vue.use(VueRouter);
             role:['admin']
           }
         },
-        {
-          path:"/device",
-          name:'device',
-          component:device,
-          meta:{
-            title:'查看设备',
-            requireAuth:true,
-            role:['admin']
-          }
-        },
-
       ]
 
     },

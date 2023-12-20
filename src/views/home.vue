@@ -41,13 +41,13 @@
                             :closable="false">
                     </el-alert>
                     <el-alert
-                            title="部门进行申请会议室时应尽量在会议开始前的1天前进行申请"
+                            title="进行申请会议室时应尽量在会议开始前的1天前进行申请"
                             type="info"
                             show-icon
                             :closable="false">
                     </el-alert>
                     <el-alert
-                            title="如若有突发情况需紧急使用会议室可通过联系管理员进行紧急申请"
+                            title="如若有突发情况需紧急使用会议室可通过联系管理员进行申请"
                             type="info"
                             show-icon
                             :closable="false">
