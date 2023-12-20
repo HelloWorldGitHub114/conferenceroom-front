@@ -62,7 +62,7 @@
                                     size="mid"
                                     placeholder="输入预约号、主题、房号等"/>
                         </template>
-                        <template slot-scope="scope" v-if="!isEmployee">
+                        <template slot-scope="scope">
                             <el-popconfirm
                                     title="确定删除该申请记录吗？"
                                     @onConfirm="handleDelete(scope.row)"
@@ -234,7 +234,7 @@
                                     size="mid"
                                     placeholder="输入预约号、主题、房号等"/>
                         </template>
-                        <template slot-scope="scope"  v-if="!isEmployee">
+                        <template slot-scope="scope">
                             <el-popconfirm
                                     title="确定删除该申请记录吗？"
                                     @onConfirm="handleDelete(scope.row)"
@@ -273,7 +273,6 @@
         name: "ConferenceRecordByUser",
         data(){
             return{
-                isEmployee:false,
                 auditState: '1',
                 maxHeight:'450px',
                 formData:[

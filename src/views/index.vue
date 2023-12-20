@@ -42,7 +42,6 @@
             <el-dropdown @command="dropdown">
               <i class="el-icon-s-tools" style="margin-right: 10px;"></i>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item v-if="isEmployee" command="员工信息">员工信息</el-dropdown-item>
                 <el-dropdown-item command="退出">退出</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -83,9 +82,6 @@
                 isAdmin:true,
                 username:'admin',
                 activeIndex:'',
-                isEmployee:false,
-                isDep:false,
-
             };
         },
         methods: {
@@ -149,15 +145,7 @@
             if(userInfo.role === 'admin'){
                 this.isAdmin = true;
             }else{
-                if(userInfo.depId !== undefined){
-                    this.isEmployee = true;
-                    this.isAdmin = false;
-                    this.isDep = false;
-                }else{
-                    this.isEmployee = false;
-                    this.isAdmin = false;
-                    this.isDep = true;
-                }
+                this.isAdmin = false;
             }
             if(userInfo.username){
                 this.username = userInfo.username;
